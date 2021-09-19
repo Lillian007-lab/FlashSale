@@ -14,8 +14,14 @@ public class RedisService {
     @Autowired
     JedisPool jedisPool;
 
-
-
+    /**
+     * Get an Object
+     * @param prefix
+     * @param key
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public <T> T get(KeyPrefix prefix, String key, Class<T> clazz){
         Jedis jedis = null;
         try{
@@ -29,6 +35,14 @@ public class RedisService {
         }
     }
 
+    /**
+     * Set an Object
+     * @param prefix
+     * @param key
+     * @param value
+     * @param <T>
+     * @return
+     */
     public <T> boolean set(KeyPrefix prefix, String key, T value){
         Jedis jedis = null;
         try{
@@ -50,6 +64,13 @@ public class RedisService {
         }
     }
 
+    /**
+     * Determin if the key exists
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
     public <T> boolean exists(KeyPrefix prefix, String key){
         Jedis jedis = null;
         try{
@@ -61,6 +82,13 @@ public class RedisService {
         }
     }
 
+    /**
+     * Increase value
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
     public <T> Long incr(KeyPrefix prefix, String key){
         Jedis jedis = null;
         try{
@@ -72,6 +100,13 @@ public class RedisService {
         }
     }
 
+    /**
+     * Decrease value
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
     public <T> Long decr(KeyPrefix prefix, String key){
         Jedis jedis = null;
         try{
