@@ -1,19 +1,16 @@
 package com.example.flashsales.controller;
 
 import com.example.flashsales.domain.User;
-//import com.example.flashsales.service.UserService;
+import com.example.flashsales.redis.RedisService;
+import com.example.flashsales.redis.UserKey;
 import com.example.flashsales.result.CodeMsg;
 import com.example.flashsales.result.Result;
 import com.example.flashsales.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.awt.geom.RectangularShape;
 
 @Controller
 @RequestMapping("/demo")
@@ -21,6 +18,9 @@ public class SampleController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RedisService redisService;
 
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model){
@@ -54,5 +54,24 @@ public class SampleController {
         userService.tx();
 
         return Result.success(true);
+    }
+
+    @RequestMapping("/redis/get")
+    @ResponseBody
+    public Result<User> redisGet(){
+        User user = redisService.get(UserKey.getById, "1", User.class);
+
+        return Result.success(user);
+    }
+
+    @RequestMapping("/redis/set")
+    @ResponseBody
+    public Result<Boolean> redisSet(){
+        User user = new User();
+        user.setId(1);
+        user.setName("adf123");
+        boolean val1 = redisService.set(UserKey.getById, "1", user);
+
+        return Result.success(val1);
     }
 }
