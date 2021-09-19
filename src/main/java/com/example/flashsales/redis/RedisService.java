@@ -38,7 +38,12 @@ public class RedisService {
                 return false;
             }
             String actualKey = prefix.getPrefix() + key;
-            jedis.set(actualKey,str);
+            int expireSec = prefix.expireSeconds();
+            if (expireSec <= 0){
+                jedis.set(actualKey,str);
+            } else {
+                jedis.setex(actualKey, expireSec, str);
+            }
             return true;
         } finally {
             returnToPool(jedis);
