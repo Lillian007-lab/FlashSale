@@ -72,6 +72,17 @@ public class RedisService {
         }
     }
 
+    public <T> Long decr(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            String actualKey = prefix.getPrefix() + key;
+            return jedis.decr(actualKey);
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
     private <T> String beanToString(T value) {
         if(value == null){
             return null;
