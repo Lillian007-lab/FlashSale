@@ -61,6 +61,17 @@ public class RedisService {
         }
     }
 
+    public <T> Long incr(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            String actualKey = prefix.getPrefix() + key;
+            return jedis.incr(actualKey);
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
     private <T> String beanToString(T value) {
         if(value == null){
             return null;
