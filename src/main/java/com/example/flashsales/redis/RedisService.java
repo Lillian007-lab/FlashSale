@@ -50,6 +50,17 @@ public class RedisService {
         }
     }
 
+    public <T> boolean exists(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            String actualKey = prefix.getPrefix() + key;
+            return jedis.exists(actualKey);
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
     private <T> String beanToString(T value) {
         if(value == null){
             return null;
