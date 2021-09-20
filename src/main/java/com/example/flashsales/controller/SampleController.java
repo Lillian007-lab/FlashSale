@@ -37,7 +37,7 @@ public class SampleController {
     @RequestMapping("/helloError")
     @ResponseBody
     public Result<String> helloError() {
-        return Result.error(CodeMsg.server_error);
+        return Result.error(CodeMsg.SERVER_ERROR);
     }
 
     @RequestMapping("/db/get")
