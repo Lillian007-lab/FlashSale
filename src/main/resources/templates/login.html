@@ -88,14 +88,14 @@
                 password: password
             },
             // dataType:"json",
-            success: function (data) {
+            success: function (result) {
                 layer.closeAll();
-                console.log(data)
-                if (data.code == 200) {
-                    //layer.msg("Success");  to do
+                console.log(result);
+                if (result.code == 0) {
+                    layer.msg("Success");
                     //window.location.href="/goods/toList";
                 } else {
-                    // layer.msg(data.message);
+                    layer.msg(result.msg);
                 }
             },
             error: function () {
