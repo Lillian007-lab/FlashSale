@@ -9,7 +9,8 @@ public class CodeMsg {
 
     // General code
     public static  CodeMsg SUCCESS = new CodeMsg(0, "success");
-    public static  CodeMsg SERVER_ERROR = new CodeMsg(1, "server error");
+    public static  CodeMsg SERVER_ERROR = new CodeMsg(500100, "server error");
+    public static  CodeMsg BIND_ERROR = new CodeMsg(500101, "Parameter error: %$");
 
     // Login code
     public static CodeMsg SESSION_ERROR = new CodeMsg(500210, "Session does not exist or is expired");
@@ -31,5 +32,11 @@ public class CodeMsg {
 
     public String getMsg() {
         return msg;
+    }
+
+    public CodeMsg fillArgs(Object... args){
+        int code = this.code;
+        String message = String.format(this.msg, args);
+        return new CodeMsg(code, message);
     }
 }
