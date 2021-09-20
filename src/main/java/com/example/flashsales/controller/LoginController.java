@@ -59,12 +59,9 @@ public class LoginController {
         }*/
 
         // Login
-        CodeMsg codeMsg = flashSalesUserService.login(loginVo);
-        if (codeMsg.getCode() == 0){
-            return Result.success(true);
-        } else {
-            return Result.error(codeMsg);
-        }
+        flashSalesUserService.login(loginVo);
+        return Result.success(true);
+
     }
 
 }

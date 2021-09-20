@@ -1,5 +1,6 @@
 package com.example.flashsales.service;
 
+import com.example.flashsales.Exception.GlobalException;
 import com.example.flashsales.dao.FlashSalesUserDAO;
 import com.example.flashsales.domain.FlashSalesUser;
 import com.example.flashsales.result.CodeMsg;
@@ -18,25 +19,25 @@ public class FlashSalesUserService {
         return flashSalesUserDAO.getById(id);
     }
 
-    public CodeMsg login(LoginVo loginVo) {
+    public boolean login(LoginVo loginVo) {
 
         if(loginVo == null){
-            return CodeMsg.SERVER_ERROR;
+            throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
         String mobile = loginVo.getMobile();
         String formPass = loginVo.getPassword();
         // determine if mobile exists
         FlashSalesUser flashSalesUser = getById(Long.parseLong(mobile));
         if (flashSalesUser == null){
-            return CodeMsg.MOBILE_NOT_EXIST;
+            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
         }
         // validate pass
         String dbPass = flashSalesUser.getPassword();
         String saltBD = flashSalesUser.getSalt();
         String calcPass = MD5Util.formPassToDBPass(formPass, saltBD);
         if (calcPass.equals(dbPass)){
-            return CodeMsg.PASSWORD_ERROR;
+            throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
-        return CodeMsg.SUCCESS;
+        return true;
     }
 }
