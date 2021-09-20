@@ -1,23 +1,18 @@
 package com.example.flashsales.controller;
 
 import com.example.flashsales.redis.RedisService;
-import com.example.flashsales.result.CodeMsg;
 import com.example.flashsales.result.Result;
 import com.example.flashsales.service.FlashSalesUserService;
 import com.example.flashsales.service.UserService;
-import com.example.flashsales.util.ValidatorUtil;
 import com.example.flashsales.vo.LoginVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.util.StringUtils;
-import org.thymeleaf.util.Validate;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
@@ -42,7 +37,7 @@ public class LoginController {
 
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(@Valid LoginVo loginVo) {
+    public Result<Boolean> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
         logger.info(loginVo.toString());
 
         /*// Validate inputs
@@ -59,7 +54,7 @@ public class LoginController {
         }*/
 
         // Login
-        flashSalesUserService.login(loginVo);
+        flashSalesUserService.login(response, loginVo);
         return Result.success(true);
 
     }
