@@ -18,6 +18,8 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.util.StringUtils;
 import org.thymeleaf.util.Validate;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -40,10 +42,10 @@ public class LoginController {
 
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(LoginVo loginVo) {
+    public Result<Boolean> doLogin(@Valid LoginVo loginVo) {
         logger.info(loginVo.toString());
 
-        // Validate inputs
+        /*// Validate inputs
         String pass = loginVo.getPassword();
         String mobile = loginVo.getMobile();
         if (StringUtils.isEmpty(pass)){
@@ -54,7 +56,7 @@ public class LoginController {
         }
         if (!ValidatorUtil.isMobile(mobile)){
             return Result.error(CodeMsg.MOBILE_ERROR);
-        }
+        }*/
 
         // Login
         CodeMsg codeMsg = flashSalesUserService.login(loginVo);
