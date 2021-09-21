@@ -8,5 +8,5 @@ public class FlashSalesUserKey extends BasePrefix{
         super(expireSeconds, prefix);
     }
 
-    public static FlashSalesUserKey token = new FlashSalesUserKey(TOKEN_EXPIRE,"tokenKey");
+    public static FlashSalesUserKey token = new FlashSalesUserKey(TOKEN_EXPIRE,"token");
 }

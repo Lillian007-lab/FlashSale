@@ -56,7 +56,7 @@ public class RedisService {
             if (expireSec <= 0){
                 jedis.set(actualKey,str);
             } else {
-                jedis.setex(actualKey, expireSec, str);
+                jedis.setex(actualKey, (long)expireSec, str);
             }
             return true;
         } finally {
