@@ -17,8 +17,8 @@ import org.thymeleaf.util.StringUtils;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("/goods")
-public class GoodsController {
+@RequestMapping("/product")
+public class ProductController {
 
     @Autowired
     FlashSalesUserService userService;
@@ -29,7 +29,7 @@ public class GoodsController {
     @RequestMapping("/to_list")
     public String toList(Model model, FlashSalesUser user){
         model.addAttribute("user", user);
-        return "goods_list";
+        return "product_list";
     }
 
     @RequestMapping("/to_detail")
@@ -44,7 +44,7 @@ public class GoodsController {
         FlashSalesUser user = userService.getByToken(response, token);
         System.out.println("user name: " + user.getUsername());
         model.addAttribute("user", user);
-        return "goods_list";
+        return "product_list";
     }
 
 }
