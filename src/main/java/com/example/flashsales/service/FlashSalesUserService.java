@@ -53,7 +53,8 @@ public class FlashSalesUserService {
         }
 
         // generate cookie
-        addCookie(response, flashSalesUser);
+        String token = UUIDUtil.uuid();
+        addCookie(response, token, flashSalesUser);
 
         return true;
     }
@@ -63,15 +64,15 @@ public class FlashSalesUserService {
             return null;
         }
         FlashSalesUser flashSalesUser = redisService.get(FlashSalesUserKey.token, token, FlashSalesUser.class);
+        // extend expiration time
         if (flashSalesUser != null){
-            addCookie(response, flashSalesUser);
+            addCookie(response, token, flashSalesUser);
         }
         return flashSalesUser;
 
     }
 
-    private void addCookie(HttpServletResponse response, FlashSalesUser user) {
-        String token = UUIDUtil.uuid();
+    private void addCookie(HttpServletResponse response, String token, FlashSalesUser user) {
         redisService.set(FlashSalesUserKey.token, token, user);
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
         cookie.setMaxAge(FlashSalesUserKey.token.expireSeconds());
