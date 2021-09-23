@@ -6,7 +6,8 @@ public class FlashSalesProduct {
 
     private Long id;
     private Long productId;
-    private Integer stockCount;
+    private Double flashSalesPrice;
+    private Integer flashSalesStock;
     private Date startDate;
     private Date endDate;
 
@@ -26,12 +27,20 @@ public class FlashSalesProduct {
         this.productId = productId;
     }
 
-    public Integer getStockCount() {
-        return stockCount;
+    public Double getFlashSalesPrice() {
+        return flashSalesPrice;
     }
 
-    public void setStockCount(Integer stockCount) {
-        this.stockCount = stockCount;
+    public void setFlashSalesPrice(Double flashSalesPrice) {
+        this.flashSalesPrice = flashSalesPrice;
+    }
+
+    public Integer getFlashSalesStock() {
+        return flashSalesStock;
+    }
+
+    public void setFlashSalesStock(Integer flashSalesStock) {
+        this.flashSalesStock = flashSalesStock;
     }
 
     public Date getStartDate() {

@@ -4,6 +4,8 @@ public class User {
     private int id;
     private String name;
 
+    private String testName;
+
     public int getId() {
         return id;
     }
@@ -18,5 +20,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
 }
