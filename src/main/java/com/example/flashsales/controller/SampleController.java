@@ -44,7 +44,8 @@ public class SampleController {
     @ResponseBody
     public Result<User> dbGet(){
         User user = userService.getById(1);
-
+        System.out.println("User Name: " + user.getName());
+        System.out.println("Test Name: " + user.getTestName());
         return Result.success(user);
     }
 

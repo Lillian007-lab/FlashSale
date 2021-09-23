@@ -1,11 +1,10 @@
 package com.example.flashsales.controller;
 
 import com.example.flashsales.domain.FlashSalesUser;
-import com.example.flashsales.redis.FlashSalesUserKey;
 import com.example.flashsales.redis.RedisService;
 import com.example.flashsales.service.FlashSalesUserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.flashsales.service.ProductService;
+import com.example.flashsales.vo.ProductVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 @RequestMapping("/product")
@@ -26,9 +26,21 @@ public class ProductController {
     @Autowired
     RedisService redisService;
 
+    @Autowired
+    ProductService productService;
+
     @RequestMapping("/to_list")
     public String toList(Model model, FlashSalesUser user){
         model.addAttribute("user", user);
+        // get product list
+        List<ProductVo> productVoList = productService.listProductVo();
+//        System.out.println("productVoList size: "  + productVoList.size());
+//        for (ProductVo p: productVoList){
+//            System.out.println(p.getId());
+//            System.out.println(p.getProductName());
+//        }
+
+        model.addAttribute("productList", productVoList);
         return "product_list";
     }
 
