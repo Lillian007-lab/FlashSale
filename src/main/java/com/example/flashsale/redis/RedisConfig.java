@@ -1,4 +1,4 @@
-package com.example.flashsales.redis;
+package com.example.flashsale.redis;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

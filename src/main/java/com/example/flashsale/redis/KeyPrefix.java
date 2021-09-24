@@ -1,4 +1,4 @@
-package com.example.flashsales.redis;
+package com.example.flashsale.redis;
 
 public interface KeyPrefix {
 

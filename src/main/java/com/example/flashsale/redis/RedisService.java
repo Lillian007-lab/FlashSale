@@ -1,4 +1,4 @@
-package com.example.flashsales.redis;
+package com.example.flashsale.redis;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
