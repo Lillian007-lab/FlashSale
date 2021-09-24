@@ -1,10 +1,10 @@
-package com.example.flashsales.controller;
+package com.example.flashsale.controller;
 
-import com.example.flashsales.redis.RedisService;
-import com.example.flashsales.result.Result;
-import com.example.flashsales.service.FlashSaleUserService;
-import com.example.flashsales.service.UserService;
-import com.example.flashsales.vo.LoginVo;
+import com.example.flashsale.redis.RedisService;
+import com.example.flashsale.result.Result;
+import com.example.flashsale.service.FlashSaleUserService;
+import com.example.flashsale.service.UserService;
+import com.example.flashsale.vo.LoginVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class LoginController {
     RedisService redisService;
 
     @Autowired
-    FlashSaleUserService flashSalesUserService;
+    FlashSaleUserService flashSaleUserService;
 
     @RequestMapping("/to_login")
     public String toLogin(){
@@ -54,7 +54,7 @@ public class LoginController {
         }*/
 
         // Login
-        flashSalesUserService.login(response, loginVo);
+        flashSaleUserService.login(response, loginVo);
         return Result.success(true);
 
     }

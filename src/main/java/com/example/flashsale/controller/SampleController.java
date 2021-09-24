@@ -1,11 +1,11 @@
-package com.example.flashsales.controller;
+package com.example.flashsale.controller;
 
-import com.example.flashsales.domain.User;
-import com.example.flashsales.redis.RedisService;
-import com.example.flashsales.redis.UserKey;
-import com.example.flashsales.result.CodeMsg;
-import com.example.flashsales.result.Result;
-import com.example.flashsales.service.UserService;
+import com.example.flashsale.domain.User;
+import com.example.flashsale.redis.RedisService;
+import com.example.flashsale.redis.UserKey;
+import com.example.flashsale.result.CodeMsg;
+import com.example.flashsale.result.Result;
+import com.example.flashsale.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

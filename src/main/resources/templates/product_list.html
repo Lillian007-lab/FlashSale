@@ -21,17 +21,17 @@
             <td>Product Name</td>
             <td>Product Image</td>
             <td>Original Price</td>
-            <td>Flash Sales Price</td>
-            <td>Flash Sales Stock</td>
+            <td>Flash Sale Price</td>
+            <td>Flash Sale Stock</td>
             <td>Details</td>
         </tr>
         <tr th:each="product,productStat : ${productList}">
             <td th:text="${product.productName}"></td>
             <td><img th:src="@{${product.productImg}}" width=30% height=30%/></td>
             <td th:text="${product.productPrice}"></td>
-            <td th:text="${product.flashSalesPrice}"></td>
-            <td th:text="${product.flashSalesStock}"></td>
-            <td><a th:href="'/productDetail.htm?productId='+${product.id}">Details</a></td>
+            <td th:text="${product.flashSalePrice}"></td>
+            <td th:text="${product.flashSaleStock}"></td>
+            <td><a th:href="'/product/to_detail/'+${product.id}">Details</a></td>
         </tr>
     </table>
 </div>
