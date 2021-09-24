@@ -1,6 +1,6 @@
-package com.example.flashsales.dao;
+package com.example.flashsale.dao;
 
-import com.example.flashsales.vo.ProductVo;
+import com.example.flashsale.vo.ProductVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

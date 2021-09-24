@@ -1,6 +1,6 @@
-package com.example.flashsales.dao;
+package com.example.flashsale.dao;
 
-import com.example.flashsales.domain.User;
+import com.example.flashsale.domain.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
