@@ -1,9 +1,12 @@
 package com.example.flashsale.dao;
 
+import com.example.flashsale.domain.FlashSaleProduct;
+import com.example.flashsale.domain.Product;
 import com.example.flashsale.vo.ProductVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -15,4 +18,7 @@ public interface ProductDAO {
 
     @Select("select p.*,fp.flash_sale_price,fp.flash_sale_stock,fp.start_date,fp.end_date from flash_sale_product fp left join product p on fp.product_id = p.id where p.id = #{productId}")
     ProductVo getProductVoByProductId(@Param("productId") long productId);
+
+    @Update("update flash_sale_product set flash_sale_stock = flash_sale_stock - 1 where product_id = #{productId}")
+    public int reduceStock(FlashSaleProduct product);
 }
