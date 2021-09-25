@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Detail</title>
+    <!--jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!--bootstrap-->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!--layer-->
+    <script type="text/Javascript" th:src="@{/layer/layer.js}"></script>
+    <!--common.js-->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">Flash Sale Product Detail</div>
+    <div class="panel-body">
+        <span th:if="${user eq null}">Please Login</span>
+        <span>There is no delivery address...</span>
+    </div>
+    <table class="table" id="product">
+        <tr>
+            <td>Product Name</td>
+            <td colspan="3" th:text="${product.productName}"></td>
+        </tr>
+        <tr>
+            <td>Product Image</td>
+            <td colspan="3"><img th:src="@{${product.productImg}}" width=30% height=30%/></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Start Time</td>
+            <td th:text="${#dates.format(product.startDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td id="flashSaleTip">
+                <input type="hidden" id="remainingSecToStart" th:value="${remainingSecToStart}">
+                <span th:if="${flashSaleStatus eq 0}">Flash Sale will start in:
+                    <span id="countDown" th:text="${remainingSecToStart}"></span> Seconds
+                </span>
+                <span th:if="${flashSaleStatus eq 1}">Flash Sale is in process</span>
+                <span th:if="${flashSaleStatus eq 2}">Flash Sale is ended</span>
+            </td>
+        </tr>
+       <!-- <tr>
+            <td>Flash Sale End Time</td>
+            <td th:text="${#dates.format(product.endDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td id="flashSaleEnd">
+                <input type="hidden" id="endSeconds" th:value="${endSeconds}">
+                <span>Count Down：<span id="countDownEnd"
+                                    th:text="${endSeconds}"></span>Seconds</span>
+                <span th:if="${flashSaleStatus eq 2}">Flash Sale is ended</span>
+            </td>
+        </tr>-->
+        <tr>
+            <td>Original Price</td>
+            <td colspan="3" th:text="${product.productPrice}"></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Price</td>
+            <td colspan="3" th:text="${product.flashSalePrice}"></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Stock</td>
+            <td colspan="3" th:text="${product.flashSaleStock}"></td>
+        </tr>
+        <tr>
+            <td>
+                <form id="secKillForm" method="post" action="/flash_sale/do_flash_sale">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">Add to Cart</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+    $(function () {
+        countDown();
+        // countDownEnd();
+    });
+
+    //Count Down to get started
+    function countDown() {
+        var remainingSecToStart = $("#remainingSecToStart").val();
+        var timeout;
+        console.log("remainingSecToStart: " + remainingSecToStart)
+
+        if (remainingSecToStart > 0) {
+            $("#buyButton").attr("disabled",true);
+            timeout = setTimeout(function () {
+                $("#countDown").text(remainingSecToStart - 1);
+                $("#remainSeconds").val(remainingSecToStart - 1);
+                countDown();
+            }, 1000);
+        } else if (remainingSecToStart == 0) {
+            $("#buyButton").attr("disabled",false);
+            console.log("timeout: " + timeout)
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            $("#flashSaleTip").html("Flash Sale is in process");
+        } else {
+            $("#buyButton").attr("disabled",true);
+            $("#flashSaleTip").html("Flash Sale is ended");
+        }
+    };
+
+    //Flash sale count down to be ended
+    function countDownEnd() {
+        var endSeconds = $("#endSeconds").val();
+        var timeoutEnd;
+        if (endSeconds > 0) {
+            timeoutEnd = setTimeout(function () {
+                $("#countDownEnd").text(endSeconds - 1);
+                $("#endSeconds").val(endSeconds - 1);
+                countDownEnd();
+            }, 1000);
+        } else if (endSeconds == 0) {
+            if (timeoutEnd) {
+                clearTimeout(timeoutEnd);
+            }
+            $("#seckillTipEnd").html("Flash Sale is ended");
+            $("#flashSaleTip").html("Flash Sale is ended");
+            $("#buyButton").attr("disabled",true);
+        } else {
+            $("#seckillTipEnd").html("Flash Sale is ended");
+            $("#buyButton").attr("disabled",true);
+        }
+    };
+
+</script>
+</html>
