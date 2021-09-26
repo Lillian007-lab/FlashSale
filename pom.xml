@@ -12,7 +12,8 @@
 	<artifactId>flash-sales</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>flash-sales</name>
-	<description>Demo project for Spring Boot</description>
+	<packaging>jar</packaging>
+
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -86,10 +87,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
 	</dependencies>
 
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
