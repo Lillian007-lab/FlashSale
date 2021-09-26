@@ -31,7 +31,7 @@ public class FlashSaleUserService {
         return flashSaleUserDAO.getById(id);
     }
 
-    public boolean login(HttpServletResponse response, LoginVo loginVo) {
+    public String login(HttpServletResponse response, LoginVo loginVo) {
 
         if(loginVo == null){
             throw new GlobalException(CodeMsg.SERVER_ERROR);
@@ -47,7 +47,7 @@ public class FlashSaleUserService {
         String dbPass = flashSaleUser.getPassword();
         String saltBD = flashSaleUser.getSalt();
         String calcPass = MD5Util.formPassToDBPass(formPass, saltBD);
-        if (calcPass.equals(dbPass)){
+        if (!calcPass.equals(dbPass)){
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
 
@@ -55,7 +55,7 @@ public class FlashSaleUserService {
         String token = UUIDUtil.uuid();
         addCookie(response, token, flashSaleUser);
 
-        return true;
+        return token;
     }
 
     public FlashSaleUser getByToken(HttpServletResponse response, String token) {
