@@ -26,6 +26,11 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    /**
+     * QPS: 2176
+     * Threads: 5000 * 10
+     *
+     */
     @RequestMapping("/to_list")
     public String toList(Model model, FlashSaleUser user){
         model.addAttribute("user", user);
