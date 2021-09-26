@@ -38,8 +38,8 @@ public class FlashSaleController {
     FlashSaleService flashSaleService;
 
     @RequestMapping("do_flash_sale")
-    public String list(Model model, FlashSaleUser user,
-                       @RequestParam("productId")long productId){
+    public String doFlashSale(Model model, FlashSaleUser user,
+                              @RequestParam("productId")long productId){
         model.addAttribute("user", user);
         if (user == null){
             return "login";
