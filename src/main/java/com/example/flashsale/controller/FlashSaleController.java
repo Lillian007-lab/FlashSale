@@ -37,6 +37,17 @@ public class FlashSaleController {
     @Autowired
     FlashSaleService flashSaleService;
 
+    /**
+     * Jmeter Result:
+     * Negative flash_sale_stock in flash_sale_product table
+     * QPS: 2012
+     * Threads: 5000 * 10
+     *
+     * @param model
+     * @param user
+     * @param productId
+     * @return
+     */
     @RequestMapping("do_flash_sale")
     public String doFlashSale(Model model, FlashSaleUser user,
                               @RequestParam("productId")long productId){
