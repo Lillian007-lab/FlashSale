@@ -1,16 +1,27 @@
 package com.example.flashsale.controller;
 
 import com.example.flashsale.domain.FlashSaleUser;
+import com.example.flashsale.redis.ProductKey;
 import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.service.FlashSaleUserService;
 import com.example.flashsale.service.ProductService;
 import com.example.flashsale.vo.ProductVo;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.context.IWebContext;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
+import org.thymeleaf.spring5.context.webflux.SpringWebFluxExpressionContext;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -26,13 +37,17 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    @Autowired
+    ThymeleafViewResolver thymeleafViewResolver;
+
     /**
      * QPS: 2176
      * Threads: 5000 * 10
      *
      */
-    @RequestMapping("/to_list")
-    public String toList(Model model, FlashSaleUser user){
+    @RequestMapping(value = "/to_list", produces = "text/html")
+    @ResponseBody
+    public String toList(Model model, FlashSaleUser user, HttpServletResponse response, HttpServletRequest request){
         model.addAttribute("user", user);
         // get product list
         List<ProductVo> productVoList = productService.listProductVo();
@@ -43,13 +58,39 @@ public class ProductController {
 //        }
 
         model.addAttribute("productList", productVoList);
-        return "product_list";
+        //return "product_list";
+
+        // get cache from redis
+        String html = redisService.get(ProductKey.getProductList, "", String.class);
+        if (!StringUtils.isEmpty(html)){
+            return  html;
+        }
+
+        // render
+        IWebContext context = new WebContext(request, response, request.getServletContext(),
+                request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("product_list", context);
+        if (!StringUtils.isEmpty(html)){
+            redisService.set(ProductKey.getProductList, "", html);
+        }
+        return html;
+
     }
 
-    @RequestMapping("/to_detail/{productId}")
-    public String detail(Model model, FlashSaleUser user, @PathVariable("productId")long productId){
+    @RequestMapping(value = "/to_detail/{productId}", produces = "text/html")
+    @ResponseBody
+    public String detail(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
+                         HttpServletResponse response, HttpServletRequest request){
+
         model.addAttribute("user", user);
 
+        // get cache from redis
+        String html = redisService.get(ProductKey.getProductDetail, "" + productId, String.class);
+        if (!StringUtils.isEmpty(html)){
+            return  html;
+        }
+
+        // render
         ProductVo productVo = productService.getProductVoByProductId(productId);
         model.addAttribute("product", productVo);
 
@@ -76,7 +117,15 @@ public class ProductController {
 
         model.addAttribute("flashSaleStatus", flashSaleStatus);
         model.addAttribute("remainingSecToStart", remainingSecToStart);
-        return "product_detail";
+        //return "product_detail";
+
+        IWebContext context = new WebContext(request, response, request.getServletContext(),
+                request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("product_detail", context);
+        if (!StringUtils.isEmpty(html)){
+            redisService.set(ProductKey.getProductDetail, "" + productId, html);
+        }
+        return html;
     }
 
 }
