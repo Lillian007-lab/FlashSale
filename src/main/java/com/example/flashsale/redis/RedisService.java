@@ -65,7 +65,7 @@ public class RedisService {
     }
 
     /**
-     * Determin if the key exists
+     * Determine if the key exists
      * @param prefix
      * @param key
      * @param <T>
@@ -81,6 +81,26 @@ public class RedisService {
             returnToPool(jedis);
         }
     }
+
+
+    /**
+     * Delete
+     * @param prefix
+     * @param key
+     * @return
+     */
+    public boolean delete(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            String actualKey = prefix.getPrefix() + key;
+            long res = jedis.del(actualKey);
+            return res > 0;
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
 
     /**
      * Increase value
