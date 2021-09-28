@@ -10,4 +10,7 @@ public interface FlashSaleUserDAO {
 
     @Select("select * from flash_sale_user where id = #{id}")
     public FlashSaleUser getById(@Param("id") long id);
+
+    @Select("update flash_sale_user set password = #{password} where id = #{id}")
+    public void update(FlashSaleUser userToBeUpdated);
 }
