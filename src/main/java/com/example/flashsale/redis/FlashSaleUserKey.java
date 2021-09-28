@@ -9,4 +9,6 @@ public class FlashSaleUserKey extends BasePrefix{
     }
 
     public static FlashSaleUserKey token = new FlashSaleUserKey(TOKEN_EXPIRE,"token");
+    public static FlashSaleUserKey getById = new FlashSaleUserKey(0,"id");
+
 }
