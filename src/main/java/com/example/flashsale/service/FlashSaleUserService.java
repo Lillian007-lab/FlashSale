@@ -28,8 +28,43 @@ public class FlashSaleUserService {
     RedisService redisService;
 
     public FlashSaleUser getById(long id){
-        return flashSaleUserDAO.getById(id);
+
+        // get from redis cache
+        FlashSaleUser user = redisService.get(FlashSaleUserKey.getById, "" + id, FlashSaleUser.class);
+        if (user != null){
+            return  user;
+        }
+
+        // get from DB and update redis
+        user =  flashSaleUserDAO.getById(id);
+        if (user != null){
+            redisService.set(FlashSaleUserKey.getById, "" + id, user);
+        }
+        return user;
     }
+
+
+    public boolean updatePassword(String token, long id, String formPass){
+        // get user
+        FlashSaleUser user = getById(id);
+        if (user == null){
+            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+        }
+
+        // update DB
+        FlashSaleUser userToBeUpdated = new FlashSaleUser();
+        userToBeUpdated.setId(id);
+        userToBeUpdated.setPassword(MD5Util.formPassToDBPass(formPass, user.getSalt()));
+        flashSaleUserDAO.update(userToBeUpdated);
+
+        // update redis
+        redisService.delete(FlashSaleUserKey.getById, "" + id);
+        user.setPassword(userToBeUpdated.getPassword());
+        redisService.set(FlashSaleUserKey.token, token, user);
+
+        return  true;
+    }
+
 
     public String login(HttpServletResponse response, LoginVo loginVo) {
 
