@@ -44,12 +44,23 @@ public class ProductController {
      * QPS: 2176
      * Threads: 5000 * 10
      *
+     * After adding html into redis
+     * QPS: 3815
+     * Threads: 5000 * 10
+     *
      */
     @RequestMapping(value = "/to_list", produces = "text/html")
     @ResponseBody
     public String toList(Model model, FlashSaleUser user, HttpServletResponse response, HttpServletRequest request){
         model.addAttribute("user", user);
         // get product list
+
+        // get cache from redis
+        String html = redisService.get(ProductKey.getProductList, "", String.class);
+        if (!StringUtils.isEmpty(html)){
+            return  html;
+        }
+
         List<ProductVo> productVoList = productService.listProductVo();
 //        System.out.println("productVoList size: "  + productVoList.size());
 //        for (ProductVo p: productVoList){
@@ -59,12 +70,6 @@ public class ProductController {
 
         model.addAttribute("productList", productVoList);
         //return "product_list";
-
-        // get cache from redis
-        String html = redisService.get(ProductKey.getProductList, "", String.class);
-        if (!StringUtils.isEmpty(html)){
-            return  html;
-        }
 
         // render
         IWebContext context = new WebContext(request, response, request.getServletContext(),
