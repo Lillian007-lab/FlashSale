@@ -31,7 +31,10 @@
             <td th:text="${product.productPrice}"></td>
             <td th:text="${product.flashSalePrice}"></td>
             <td th:text="${product.flashSaleStock}"></td>
-            <td><a th:href="'/product/to_detail/'+${product.id}">Details</a></td>
+
+<!--            <td><a th:href="'/product/to_detail/'+${product.id}">Details</a></td>-->
+
+            <td><a th:href="'/product_detail.htm?productId='+${product.id}">Details</a></td>
         </tr>
     </table>
 </div>
