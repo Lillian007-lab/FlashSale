@@ -3,8 +3,10 @@ package com.example.flashsale.controller;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.redis.ProductKey;
 import com.example.flashsale.redis.RedisService;
+import com.example.flashsale.result.Result;
 import com.example.flashsale.service.FlashSaleUserService;
 import com.example.flashsale.service.ProductService;
+import com.example.flashsale.vo.ProductDetailVo;
 import com.example.flashsale.vo.ProductVo;
 import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -84,7 +87,7 @@ public class ProductController {
 
     @RequestMapping(value = "/to_detail/{productId}", produces = "text/html")
     @ResponseBody
-    public String detail(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
+    public String detail2(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
                          HttpServletResponse response, HttpServletRequest request){
 
         model.addAttribute("user", user);
@@ -131,6 +134,49 @@ public class ProductController {
             redisService.set(ProductKey.getProductDetail, "" + productId, html);
         }
         return html;
+    }
+
+
+
+    @RequestMapping(value = "/detail/{productId}")
+    @ResponseBody
+    public Result<ProductDetailVo> detail(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
+                                          HttpServletResponse response, HttpServletRequest request){
+        // render
+        ProductVo productVo = productService.getProductVoByProductId(productId);
+
+        long startAt = productVo.getStartDate().getTime();
+        long endAt = productVo.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+
+        int flashSaleStatus = 0;
+        int remainingSecToStart = 0;
+
+        System.out.println("now: " + new Date(now));
+        System.out.println("startAt: " + new Date(startAt));
+
+        if (now < startAt){
+            flashSaleStatus = 0;
+            remainingSecToStart = (int)((startAt - now) / 1000);
+        } else if (now > endAt){
+            flashSaleStatus = 2;
+            remainingSecToStart = -1;
+        } else {
+            flashSaleStatus = 1;
+            remainingSecToStart = 0;
+        }
+
+        System.out.println("flashSaleStatus: " +  flashSaleStatus);
+        System.out.println("remainingSecToStart: " +  remainingSecToStart);
+
+        ProductDetailVo productDetailVo = new ProductDetailVo();
+        productDetailVo.setProductVo(productVo);
+        productDetailVo.setUser(user);
+        productDetailVo.setFlashSaleStatus(flashSaleStatus);
+        productDetailVo.setRemainingSecToStart(remainingSecToStart);
+
+        return Result.success(productDetailVo);
+
     }
 
 }
