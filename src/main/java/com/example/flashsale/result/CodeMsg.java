@@ -18,11 +18,13 @@ public class CodeMsg {
     public static CodeMsg MOBILE_NOT_EXIST  = new CodeMsg(500214, "Mobile number does not exist");
     public static CodeMsg PASSWORD_ERROR  = new CodeMsg(500214, "Password is not correct");
 
+    // Order code
+    public static final CodeMsg ORDER_NOT_EXIT = new CodeMsg(500214, "Order does not exit");;
+
+
     // Flash Sale code 5005xx
     public static CodeMsg FLASH_SALE_OUT_OF_STOCK  = new CodeMsg(500500, "Product is out of stock");
     public static CodeMsg FLASH_SALE_REPEAT  = new CodeMsg(500500, "Can't buy a same flash sale product multiple times");
-
-
 
 
     public CodeMsg(int code, String msg) {
