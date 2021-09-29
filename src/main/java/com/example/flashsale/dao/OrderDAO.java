@@ -12,9 +12,12 @@ public interface OrderDAO {
 
     @Insert("insert into `flash-sales`.order(user_id, product_id, delivery_addr_id, product_name, product_count, product_price, order_channel, status, create_date)values(" +
             "#{userId}, #{productId}, #{deliveryAddrId}, #{productName}, #{productCount}, #{productPrice}, #{orderChannel}, #{status}, #{createDate})")
-    @SelectKey(keyColumn = "id", keyProperty = "id", resultType = long.class, before = false, statement = "select last_insert_id()")
+    @SelectKey(keyColumn = "id", keyProperty = "id", resultType = Long.class, before = false, statement = "select last_insert_id()")
     public long insert(Order order);
 
     @Insert("insert into flash_sale_order (user_id, product_id, order_id)values(#{userId}, #{productId}, #{orderId})")
     public int insertFlashSaleOrder(FlashSaleOrder flashSaleOrder);
+
+    @Select("select * from `flash-sales`.order where id = #{orderId}")
+    public Order getOrderById(@Param("orderId") long orderId);
 }
