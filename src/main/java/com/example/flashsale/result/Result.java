@@ -6,7 +6,7 @@ public class Result<T> {
     private T data;
 
     private Result(T data) {
-        this.code = 0;
+        this.code = CodeMsg.SUCCESS.getCode();
         this.msg = "success";
         this.data = data;
     }
