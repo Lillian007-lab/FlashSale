@@ -91,7 +91,7 @@
             success: function (result) {
                 layer.closeAll();
                 console.log(result);
-                if (result.code == 0) {
+                if (result.code == 200) {
                     layer.msg("Success");
                     window.location.href="/product/to_list";
                 } else {
