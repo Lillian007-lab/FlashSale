@@ -18,6 +18,10 @@ public class OrderService {
     @Autowired
     OrderDAO orderDAO;
 
+    public Order getOrderById(long orderId) {
+        return orderDAO.getOrderById(orderId);
+    }
+
     public FlashSaleOrder getFlashSaleOrderByUserIdProductId(Long userId, long productId) {
         return orderDAO.getFlashSaleOrderByUserIdProductId(userId, productId);
     }
@@ -36,17 +40,20 @@ public class OrderService {
         order.setStatus(0);
         order.setUserId(user.getId());
 
-        long orderId = orderDAO.insert(order);
-        System.out.println("order ID: " + orderId);
+/*        long orderId = orderDAO.insert(order);
+        System.out.println("order: " + order.toString());
+        System.out.println("order ID: " + orderId);*/
+        orderDAO.insert(order);
+        long orderId = order.getId();
 
         FlashSaleOrder flashSaleOrder = new FlashSaleOrder();
         flashSaleOrder.setOrderId(orderId);
         flashSaleOrder.setProductId(productVo.getId());
         flashSaleOrder.setUserId(user.getId());
 
-
         orderDAO.insertFlashSaleOrder(flashSaleOrder);
         System.out.println("order is created");
         return order;
     }
+
 }
