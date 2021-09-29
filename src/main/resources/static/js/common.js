@@ -6,6 +6,8 @@ function g_showLoading() {
 }
 //salt
 var g_password_salt = "1a2b3c4d"
+
+
 //Get url,  substr has bug
 function g_getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
