@@ -90,7 +90,7 @@
             $("#buyButton").attr("disabled",true);
             timeout = setTimeout(function () {
                 $("#countDown").text(remainingSecToStart - 1);
-                $("#remainSeconds").val(remainingSecToStart - 1);
+                $("#remainingSecToStart").val(remainingSecToStart - 1);
                 countDown();
             }, 1000);
         } else if (remainingSecToStart == 0) {
