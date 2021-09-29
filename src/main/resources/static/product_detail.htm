@@ -61,10 +61,12 @@
         </tr>
         <tr>
             <td>
-                <form id="secKillForm" method="post" action="/flash_sale/do_flash_sale">
+<!--                <form id="secKillForm" method="post" action="/flash_sale/do_flash_sale">
                     <input type="hidden" name="productId" id="productId">
                     <button class="btn btn-primary btn-block" type="submit" id="buyButton">Add to Cart</button>
-                </form>
+                </form>-->
+                <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="doFlashSale()">Add to Cart</button>
+                <input type="hidden" name="productId" id="productId">
             </td>
         </tr>
     </table>
@@ -76,6 +78,30 @@
         // countDown();
         // countDownEnd();
     });
+
+    // do flash sale
+    function doFlashSale() {
+        $.ajax({
+            url: "/flash_sale/do_flash_sale",
+            type: "POST",
+            data: {
+                productId: $("#productId").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    window.location.href = "/orderDetail.htm?orderId=" + data.data.id;
+                    //getSecKillResult($("#goodsId").val());
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
+
+
 
     //ajax async request data
     function getProductDetail() {
@@ -90,7 +116,7 @@
                 if (data.code == 200) {
                     render(data.data);
                 } else {
-                    layer.msg(data.code + ":" + data.message);
+                    layer.msg(data.code + ":" + data.msg);
                 }
             },
             error: function () {
