@@ -33,6 +33,14 @@ public class SampleController {
         return Result.success("hello, RabbitMQ");
     }
 
+    @RequestMapping("/mq/topic")
+    @ResponseBody
+    public Result<String> mqTopic(){
+        mqSender.sendTopic("hello, rabbitMQ");
+        return Result.success("hello, RabbitMQ");
+    }
+
+
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model){
         model.addAttribute("name", "Lillian");
