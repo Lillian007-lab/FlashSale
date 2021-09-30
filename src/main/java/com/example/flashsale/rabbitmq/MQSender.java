@@ -4,6 +4,8 @@ import com.example.flashsale.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +36,16 @@ public class MQSender {
         String msg = RedisService.beanToString(message);
         logger.info("send fanout message: " + msg);
         amqpTemplate.convertAndSend(MQConfig.FANOUT_EXCHANGE, "",msg);
+    }
+
+    public void sendHeader(Object message){
+        String msg = RedisService.beanToString(message);
+        logger.info("send header message: " + msg);
+
+        MessageProperties messageProperties = new MessageProperties();
+        messageProperties.setHeader("header1", "value1");
+        messageProperties.setHeader("header2", "value2");
+        Message obj = new Message(msg.getBytes(), messageProperties);
+        amqpTemplate.convertAndSend(MQConfig.HEADERS_EXCHANGE, "",obj);
     }
 }
