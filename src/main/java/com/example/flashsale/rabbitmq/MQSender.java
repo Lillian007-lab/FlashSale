@@ -28,4 +28,11 @@ public class MQSender {
         amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, MQConfig.ROUTING_KEY1, msg + "1");
         amqpTemplate.convertAndSend(MQConfig.TOPIC_EXCHANGE, MQConfig.ROUTING_KEY2, msg + "2");
     }
+
+
+    public void sendFanout(Object message){
+        String msg = RedisService.beanToString(message);
+        logger.info("send fanout message: " + msg);
+        amqpTemplate.convertAndSend(MQConfig.FANOUT, "",msg);
+    }
 }
