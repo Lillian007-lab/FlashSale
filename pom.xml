@@ -49,11 +49,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
+<!--		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>1.2.6</version>
-		</dependency>
+		</dependency>-->
 
 		<!-- Test -->
 		<dependency>
@@ -87,6 +87,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
+
+		<!-- RabbitMQ -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
 
 	</dependencies>
 
