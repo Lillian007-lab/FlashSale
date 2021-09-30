@@ -1,6 +1,7 @@
 package com.example.flashsale.controller;
 
 import com.example.flashsale.domain.User;
+import com.example.flashsale.rabbitmq.MQSender;
 import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.redis.UserKey;
 import com.example.flashsale.result.CodeMsg;
@@ -21,6 +22,16 @@ public class SampleController {
 
     @Autowired
     RedisService redisService;
+
+    @Autowired
+    MQSender mqSender;
+
+    @RequestMapping("/mq")
+    @ResponseBody
+    public Result<String> mq(){
+        mqSender.send("hello, rabbitMQ");
+        return Result.success("hello, RabbitMQ");
+    }
 
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model){
