@@ -4,8 +4,11 @@ import com.example.flashsale.dao.OrderDAO;
 import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.domain.Order;
+import com.example.flashsale.redis.OrderKey;
+import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.vo.ProductVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +21,16 @@ public class OrderService {
     @Autowired
     OrderDAO orderDAO;
 
+    @Autowired
+    RedisService redisService;
+
     public Order getOrderById(long orderId) {
         return orderDAO.getOrderById(orderId);
     }
 
     public FlashSaleOrder getFlashSaleOrderByUserIdProductId(Long userId, long productId) {
-        return orderDAO.getFlashSaleOrderByUserIdProductId(userId, productId);
+        //return orderDAO.getFlashSaleOrderByUserIdProductId(userId, productId);
+        return redisService.get(OrderKey.getFlashSaleOrderByUidPid, "" + userId + "_" + productId, FlashSaleOrder.class);
     }
 
 
@@ -53,6 +60,9 @@ public class OrderService {
 
         orderDAO.insertFlashSaleOrder(flashSaleOrder);
         System.out.println("order is created");
+
+        redisService.set(OrderKey.getFlashSaleOrderByUidPid, "" + user.getId() + "_" + productVo.getId(), flashSaleOrder);
+
         return order;
     }
 
