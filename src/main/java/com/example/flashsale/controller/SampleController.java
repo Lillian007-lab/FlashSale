@@ -40,6 +40,12 @@ public class SampleController {
         return Result.success("hello, RabbitMQ");
     }
 
+    @RequestMapping("/mq/fanout")
+    @ResponseBody
+    public Result<String> mqFanout(){
+        mqSender.sendFanout("hello, rabbitMQ");
+        return Result.success("hello, RabbitMQ");
+    }
 
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model){
