@@ -33,6 +33,6 @@ public class MQSender {
     public void sendFanout(Object message){
         String msg = RedisService.beanToString(message);
         logger.info("send fanout message: " + msg);
-        amqpTemplate.convertAndSend(MQConfig.FANOUT, "",msg);
+        amqpTemplate.convertAndSend(MQConfig.FANOUT_EXCHANGE, "",msg);
     }
 }
