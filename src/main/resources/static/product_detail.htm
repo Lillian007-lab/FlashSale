@@ -65,7 +65,7 @@
                     <input type="hidden" name="productId" id="productId">
                     <button class="btn btn-primary btn-block" type="submit" id="buyButton">Add to Cart</button>
                 </form>-->
-                <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="doFlashSale()">Add to Cart</button>
+                <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="getFlashSalePath()">Add to Cart</button>
                 <input type="hidden" name="productId" id="productId">
             </td>
         </tr>
@@ -79,10 +79,34 @@
         // countDownEnd();
     });
 
-    // do flash sale
-    function doFlashSale() {
+
+    function getFlashSalePath () {
+        var productId = $("#productId").val();
+        g_showLoading();
         $.ajax({
-            url: "/flash_sale/do_flash_sale",
+            url: "/flash_sale/path",
+            type: "GET",
+            data: {
+                productId: productId
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var path = data.data;
+                    doFlashSale(path);
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
+
+    // do flash sale
+    function doFlashSale(path) {
+        $.ajax({
+            url: "/flash_sale/" + path +"/do_flash_sale",
             type: "POST",
             data: {
                 productId: $("#productId").val()
@@ -117,7 +141,7 @@
                     } else if (result == 0){
                         setTimeout(function (){
                             getFlashSaleResult(productId);
-                        }, 50);
+                        }, 200);
                     } else {
                         layer.confirm("Congratulations! Check out your order details?" , {btn:["Yes", "No"]},
                             function (){
