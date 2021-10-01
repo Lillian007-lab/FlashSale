@@ -48,4 +48,11 @@ public class MQSender {
         Message obj = new Message(msg.getBytes(), messageProperties);
         amqpTemplate.convertAndSend(MQConfig.HEADERS_EXCHANGE, "",obj);
     }
+
+    public void sendFlashSaleMessage(FlashSaleMessage message) {
+        String msg = RedisService.beanToString(message);
+        logger.info("send message: " + msg);
+        amqpTemplate.convertAndSend(MQConfig.FLASH_SALE_QUEUE, msg);
+
+    }
 }
