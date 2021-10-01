@@ -21,4 +21,7 @@ public interface ProductDAO {
 
     @Update("update flash_sale_product set flash_sale_stock = flash_sale_stock - 1 where product_id = #{productId} and flash_sale_stock > 0")
     public int reduceStock(FlashSaleProduct product);
+
+    @Update("update flash_sale_product set flash_sale_stock = #{flashSaleStock} where product_id = #{productId}")
+    void resetStock(long productId, int flashSaleStock);
 }
