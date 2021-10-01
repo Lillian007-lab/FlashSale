@@ -33,4 +33,18 @@ public class ProductService {
 
         return res> 0;
     }
+
+
+    /**
+     * Reset flash sale stock in table flash_sale_product, for testing purpose
+     *
+     * @param productVoList
+     */
+    public void resetStock(List<ProductVo> productVoList) {
+        for (ProductVo productVo: productVoList) {
+            long productId = productVo.getId();
+            int flashSaleStock = productVo.getFlashSaleStock();
+            productDAO.resetStock(productId, flashSaleStock);
+        }
+    }
 }
