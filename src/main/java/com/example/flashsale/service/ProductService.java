@@ -25,10 +25,12 @@ public class ProductService {
         return productDAO.getProductVoByProductId(productId);
     }
 
-    public void reduceStock(ProductVo productVo) {
+    public boolean reduceStock(ProductVo productVo) {
         FlashSaleProduct product = new FlashSaleProduct();
         product.setProductId(productVo.getId());
-        productDAO.reduceStock(product);
+        int res = productDAO.reduceStock(product);
         System.out.println("stock is reduced");
+
+        return res> 0;
     }
 }
