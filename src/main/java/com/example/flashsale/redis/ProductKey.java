@@ -10,5 +10,6 @@ public class ProductKey extends BasePrefix{
 
     public static ProductKey getProductList = new ProductKey(TOKEN_EXPIRE,"productList");
     public static ProductKey getProductDetail = new ProductKey(TOKEN_EXPIRE,"productDetail");
+    public static ProductKey getFlashSaleStock = new ProductKey(0,"flashSaleStock");
 
 }
