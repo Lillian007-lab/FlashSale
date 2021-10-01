@@ -3,6 +3,9 @@ package com.example.flashsale.controller;
 import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.domain.Order;
+import com.example.flashsale.rabbitmq.FlashSaleMessage;
+import com.example.flashsale.rabbitmq.MQSender;
+import com.example.flashsale.redis.ProductKey;
 import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.result.CodeMsg;
 import com.example.flashsale.result.Result;
@@ -11,6 +14,7 @@ import com.example.flashsale.service.OrderService;
 import com.example.flashsale.service.ProductService;
 import com.example.flashsale.service.UserService;
 import com.example.flashsale.vo.ProductVo;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.naming.ldap.SortResponseControl;
+import java.util.List;
 
 @Controller
 @RequestMapping("/flash_sale")
-public class FlashSaleController {
+public class FlashSaleController implements InitializingBean {
 
     @Autowired
     UserService userService;
@@ -40,6 +44,23 @@ public class FlashSaleController {
     @Autowired
     FlashSaleService flashSaleService;
 
+    @Autowired
+    MQSender mqSender;
+
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        List<ProductVo> productVoList = productService.listProductVo();
+        if (productVoList == null){
+            return;
+        }
+        for (ProductVo productVo: productVoList){
+            redisService.set(ProductKey.getFlashSaleStock, "" + productVo.getId(), productVo.getFlashSaleStock());
+        }
+    }
+
+
+
     /**
      * Jmeter Result:
      * Negative flash_sale_stock in flash_sale_product table
@@ -53,14 +74,34 @@ public class FlashSaleController {
      */
     @RequestMapping(value = "do_flash_sale", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Order> doFlashSale(Model model, FlashSaleUser user,
+    public Result<Integer> doFlashSale(Model model, FlashSaleUser user,
                               @RequestParam("productId")long productId){
         model.addAttribute("user", user);
         if (user == null){
             return Result.error(CodeMsg.SESSION_ERROR);
         }
 
-        // check if the product is in stock
+        // pre-decrease stock in redis
+        long stock = redisService.decr(ProductKey.getFlashSaleStock, "" + productId);
+        if (stock < 0){
+            return Result.error(CodeMsg.FLASH_SALE_OUT_OF_STOCK);
+        }
+
+        // A user can't place multiple orders of a same flash sale product
+        FlashSaleOrder flashSaleOrder = orderService.getFlashSaleOrderByUserIdProductId(user.getId(), productId);
+        if (flashSaleOrder != null){
+            return Result.error(CodeMsg.FLASH_SALE_REPEAT);
+        }
+
+        // add to queue
+        FlashSaleMessage message = new FlashSaleMessage();
+        message.setUser(user);
+        message.setProductId(productId);
+        mqSender.sendFlashSaleMessage(message);
+
+        return Result.success(CodeMsg.SUCCESS.getCode());
+
+/*        // check if the product is in stock
         ProductVo productVo = productService.getProductVoByProductId(productId);
         int stock = productVo.getFlashSaleStock();
         if (stock <= 0){
@@ -82,6 +123,30 @@ public class FlashSaleController {
 //        model.addAttribute("order", order);
 //        model.addAttribute("product", productVo);
 
-        return Result.success(order);
+        return Result.success(order);*/
+    }
+
+
+    /**
+     * return orderIs, if success
+     *        -1, if failed
+     *        0, in the queue
+     *
+     * @param model
+     * @param user
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "/result", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Long> flashSaleResult(Model model, FlashSaleUser user,
+                                           @RequestParam("productId") long productId){
+        model.addAttribute("user", user);
+        if (user == null){
+            return  Result.error(CodeMsg.SESSION_ERROR);
+        }
+
+        long result = flashSaleService.getFlashSaleResult(user.getId(), productId);
+        return Result.success(result);
     }
 }
