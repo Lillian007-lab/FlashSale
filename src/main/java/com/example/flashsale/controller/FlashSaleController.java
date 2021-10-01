@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/flash_sale")
@@ -47,6 +49,7 @@ public class FlashSaleController implements InitializingBean {
     @Autowired
     MQSender mqSender;
 
+    private Map<Long, Boolean> localOverMap = new HashMap<>();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -56,6 +59,7 @@ public class FlashSaleController implements InitializingBean {
         }
         for (ProductVo productVo: productVoList){
             redisService.set(ProductKey.getFlashSaleStock, "" + productVo.getId(), productVo.getFlashSaleStock());
+            localOverMap.put(productVo.getId(), false);
         }
     }
 
@@ -79,6 +83,14 @@ public class FlashSaleController implements InitializingBean {
         model.addAttribute("user", user);
         if (user == null){
             return Result.error(CodeMsg.SESSION_ERROR);
+        }
+
+        // Utilize memory tag, to reduce visits to redis
+        // Check out is local is out of stock
+        boolean isLocalOver = localOverMap.get(productId);
+        if (isLocalOver) {
+            localOverMap.put(productId, true);
+            return Result.error(CodeMsg.FLASH_SALE_OUT_OF_STOCK);
         }
 
         // pre-decrease stock in redis
