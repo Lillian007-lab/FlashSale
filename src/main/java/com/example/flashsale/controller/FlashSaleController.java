@@ -5,6 +5,8 @@ import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.domain.Order;
 import com.example.flashsale.rabbitmq.FlashSaleMessage;
 import com.example.flashsale.rabbitmq.MQSender;
+import com.example.flashsale.redis.FlashSaleKey;
+import com.example.flashsale.redis.OrderKey;
 import com.example.flashsale.redis.ProductKey;
 import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.result.CodeMsg;
@@ -70,6 +72,9 @@ public class FlashSaleController implements InitializingBean {
      * Negative flash_sale_stock in flash_sale_product table
      * QPS: 2012
      * Threads: 5000 * 10
+     *
+     * After caching and RabbitMQ added:
+     * QPS: 2350
      *
      * @param model
      * @param user
@@ -160,5 +165,27 @@ public class FlashSaleController implements InitializingBean {
 
         long result = flashSaleService.getFlashSaleResult(user.getId(), productId);
         return Result.success(result);
+    }
+
+    /**
+     * Reset for testing purpose
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Boolean> reset(Model model) {
+        int stockCountTOReset = 100;
+        List<ProductVo> productVoList = productService.listProductVo();
+        for (ProductVo productVo: productVoList) {
+            productVo.setFlashSaleStock(stockCountTOReset);;
+            redisService.set(ProductKey.getFlashSaleStock, "" + productVo.getId(), stockCountTOReset);
+            localOverMap.put(productVo.getId(), false);
+        }
+        redisService.delete(OrderKey.getFlashSaleOrderByUidPid.getPrefix() + "*");
+        redisService.delete(FlashSaleKey.isProductOver.getPrefix() + "*");
+        flashSaleService.reset(productVoList);
+        return Result.success(true);
     }
 }
