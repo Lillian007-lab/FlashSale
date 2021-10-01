@@ -5,7 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -99,6 +104,42 @@ public class RedisService {
         } finally {
             returnToPool(jedis);
         }
+    }
+
+    /**
+     * Delete keys by pattern
+     *
+     * @param pattern
+     * @return
+     */
+    public boolean delete(String pattern){
+        Set<String> matchingKeys = new HashSet<>();
+        ScanParams params = new ScanParams();
+        params.match(pattern);
+
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String nextCursor = "0";
+
+            do {
+                ScanResult<String> scanResult = jedis.scan(nextCursor, params);
+                List<String> keys = scanResult.getResult();
+                nextCursor = scanResult.getCursor();
+
+                matchingKeys.addAll(keys);
+
+            } while(!nextCursor.equals("0"));
+
+            if (matchingKeys.size() == 0) {
+                return false;
+            }
+
+            jedis.del(matchingKeys.toArray(new String[matchingKeys.size()]));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
     }
 
 
