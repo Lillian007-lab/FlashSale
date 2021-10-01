@@ -20,4 +20,10 @@ public interface OrderDAO {
 
     @Select("select * from `flash-sales`.order where id = #{orderId}")
     public Order getOrderById(@Param("orderId") long orderId);
+
+    @Delete("delete from `flash-sales`.order")
+    void deleteOrders();
+
+    @Delete("delete from `flash-sales`.flash_sale_order")
+    void deleteFlashSaleOrders();
 }
