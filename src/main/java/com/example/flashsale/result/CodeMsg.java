@@ -9,6 +9,8 @@ public class CodeMsg {
     public static  CodeMsg SUCCESS = new CodeMsg(200, "success");
     public static  CodeMsg SERVER_ERROR = new CodeMsg(500100, "server error");
     public static  CodeMsg BIND_ERROR = new CodeMsg(500101, "Parameter error: %$");
+    public static  CodeMsg REQUEST_ILLEGAL = new CodeMsg(500102, "Illegal request");
+
 
     // Login code
     public static CodeMsg SESSION_ERROR = new CodeMsg(500210, "Session does not exist or is expired");
