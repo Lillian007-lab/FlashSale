@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class FlashSaleService {
 
@@ -70,5 +72,15 @@ public class FlashSaleService {
 
     private boolean getProduceOver(long productId){
         return redisService.exists(FlashSaleKey.isProductOver, "" + productId);
+    }
+
+    /**
+     * Reset Database for testing purpose
+     *
+     * @param productVoList
+     */
+    public void reset(List<ProductVo> productVoList) {
+        productService.resetStock(productVoList);
+        orderService.deleteOrders();
     }
 }
