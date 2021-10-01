@@ -22,8 +22,7 @@ public class MQConfig {
     public static final String FANOUT_EXCHANGE = "fanoutExchange";
     public static final String HEADERS_EXCHANGE = "headersExchange";
     public static final String HEADERS_QUEUE = "headers.queue";
-
-
+    public static final String FLASH_SALE_QUEUE = "flash.sale.queue";
 
 
     /**
@@ -33,7 +32,7 @@ public class MQConfig {
      */
     @Bean
     public Queue queue() {
-        return new Queue(QUEUE, true);
+        return new Queue(FLASH_SALE_QUEUE, true);
     }
 
     /**
