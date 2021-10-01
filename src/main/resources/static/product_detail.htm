@@ -89,8 +89,8 @@
             },
             success: function (data) {
                 if (data.code == 200) {
-                    window.location.href = "/orderDetail.htm?orderId=" + data.data.id;
-                    //getSecKillResult($("#goodsId").val());
+                    //window.location.href = "/orderDetail.htm?orderId=" + data.data.id;
+                    getFlashSaleResult($("#productId").val());
                 } else {
                     layer.msg(data.code + ":" + data.msg);
                 }
@@ -101,6 +101,42 @@
         });
     }
 
+    function getFlashSaleResult(productId){
+        g_showLoading();
+        $.ajax({
+            url: "/flash_sale/result",
+            type: "GET",
+            data: {
+                productId: $("#productId").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var result = data.data;
+                    if (result < 0) {
+                        layer.msg("Sorry, Flash Sale didn't complete!")
+                    } else if (result == 0){
+                        setTimeout(function (){
+                            getFlashSaleResult(productId);
+                        }, 50);
+                    } else {
+                        layer.confirm("Congratulations! Check out your order details?" , {btn:["Yes", "No"]},
+                            function (){
+                                window.location.href = "/orderDetail.htm?orderId=" + result;
+                            },
+                            function () {
+                                layer.closeAll();
+                            }
+                        );
+                    }
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
 
 
     //ajax async request data
