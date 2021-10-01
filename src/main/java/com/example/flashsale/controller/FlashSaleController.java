@@ -15,19 +15,18 @@ import com.example.flashsale.service.FlashSaleService;
 import com.example.flashsale.service.OrderService;
 import com.example.flashsale.service.ProductService;
 import com.example.flashsale.service.UserService;
+import com.example.flashsale.util.MD5Util;
 import com.example.flashsale.vo.ProductVo;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/flash_sale")
@@ -81,13 +80,20 @@ public class FlashSaleController implements InitializingBean {
      * @param productId
      * @return
      */
-    @RequestMapping(value = "do_flash_sale", method = RequestMethod.POST)
+    @RequestMapping(value = "/{path}/do_flash_sale", method = RequestMethod.POST)
     @ResponseBody
     public Result<Integer> doFlashSale(Model model, FlashSaleUser user,
-                              @RequestParam("productId")long productId){
+                                       @RequestParam("productId")long productId,
+                                       @PathVariable("path") String path){
         model.addAttribute("user", user);
         if (user == null){
             return Result.error(CodeMsg.SESSION_ERROR);
+        }
+
+        // verify path
+        boolean isValidPath = flashSaleService.checkPath(user, productId, path);
+        if (!isValidPath){
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
         }
 
         // Utilize memory tag, to reduce visits to redis
@@ -166,6 +172,24 @@ public class FlashSaleController implements InitializingBean {
         long result = flashSaleService.getFlashSaleResult(user.getId(), productId);
         return Result.success(result);
     }
+
+
+
+
+    @RequestMapping(value = "/path", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<String> getFlashSalePath(Model model, FlashSaleUser user,
+                                        @RequestParam("productId") long productId){
+        model.addAttribute("user", user);
+        if (user == null){
+            return  Result.error(CodeMsg.SESSION_ERROR);
+        }
+
+        String path = flashSaleService.createFlashSalePath(user, productId);
+        return Result.success(path);
+    }
+
+
 
     /**
      * Reset for testing purpose
