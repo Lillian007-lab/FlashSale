@@ -66,4 +66,13 @@ public class OrderService {
         return order;
     }
 
+
+    /**
+     * Clear Order table and Flash Sale Order Table
+     *
+     */
+    public void deleteOrders() {
+        orderDAO.deleteOrders();
+        orderDAO.deleteFlashSaleOrders();
+    }
 }
