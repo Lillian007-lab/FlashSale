@@ -2,7 +2,6 @@ package com.example.flashsale.controller;
 
 import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
-import com.example.flashsale.domain.Order;
 import com.example.flashsale.rabbitmq.FlashSaleMessage;
 import com.example.flashsale.rabbitmq.MQSender;
 import com.example.flashsale.redis.FlashSaleKey;
@@ -15,7 +14,6 @@ import com.example.flashsale.service.FlashSaleService;
 import com.example.flashsale.service.OrderService;
 import com.example.flashsale.service.ProductService;
 import com.example.flashsale.service.UserService;
-import com.example.flashsale.util.MD5Util;
 import com.example.flashsale.vo.ProductVo;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +21,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/flash_sale")
@@ -187,6 +188,29 @@ public class FlashSaleController implements InitializingBean {
 
         String path = flashSaleService.createFlashSalePath(user, productId);
         return Result.success(path);
+    }
+
+
+    @RequestMapping(value = "/verifyCode", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<String> getFlashSaleVerifyCode(Model model, FlashSaleUser user,
+                                                 @RequestParam("productId") long productId,
+                                                 HttpServletResponse response){
+
+        if (user == null){
+            return  Result.error(CodeMsg.SESSION_ERROR);
+        }
+        BufferedImage image = flashSaleService.createVerifyCode(user, productId);
+        try {
+            OutputStream out = response.getOutputStream();
+            ImageIO.write(image, "JPEG", out);
+            out.flush();
+            out.close();
+            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Result.error(CodeMsg.FLASH_SALE_Failed);
+        }
     }
 
 
