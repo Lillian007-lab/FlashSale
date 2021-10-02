@@ -94,7 +94,8 @@
             url: "/flash_sale/path",
             type: "GET",
             data: {
-                productId: productId
+                productId: productId,
+                verifyCode: $("#verifyCode").val()
             },
             success: function (data) {
                 if (data.code == 200) {
