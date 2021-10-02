@@ -12,5 +12,6 @@ public class FlashSaleKey extends BasePrefix{
 
     public static FlashSaleKey isProductOver = new FlashSaleKey("productOver");
     public static FlashSaleKey getFlashSalePath = new FlashSaleKey(60, "flashSalePath");
+    public static FlashSaleKey getVerificationCode = new FlashSaleKey(300, "verificationCode");
 
 }
