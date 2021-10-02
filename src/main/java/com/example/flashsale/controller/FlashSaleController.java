@@ -1,5 +1,6 @@
 package com.example.flashsale.controller;
 
+import com.example.flashsale.access.AccessLimit;
 import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.rabbitmq.FlashSaleMessage;
@@ -175,6 +176,7 @@ public class FlashSaleController implements InitializingBean {
 
 
 
+    @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value = "/path", method = RequestMethod.GET)
     @ResponseBody
     public Result<String> getFlashSalePath(FlashSaleUser user,
@@ -185,19 +187,6 @@ public class FlashSaleController implements InitializingBean {
         if (user == null){
             return  Result.error(CodeMsg.SESSION_ERROR);
         }
-
-        // check visit times in redis, limit 5 times/ 5 seconds
-        String uri = request.getRequestURI();
-        String key = uri + "_" + user.getId();
-        Integer count = redisService.get(AccessKey.access, key, Integer.class );
-        if (count == null) {
-            redisService.set(AccessKey.access, key, 1);
-        } else if (count < 5) {
-            redisService.incr(AccessKey.access, key);
-        } else {
-            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
-        }
-
 
         // verify code
         boolean isValid = flashSaleService.checkVerifyCode(user, productId, verifyCode);
