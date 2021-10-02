@@ -67,7 +67,7 @@
                 </form>-->
                 <div class="row">
                     <div class="form-inline">
-                        <img id="verifyCodeImg" width="80" height="32" style="display:none"/>
+                        <img id="verifyCodeImg" width="80" height="32" style="display:none" onclick="refreshVerifyCode()"/>
                         <input id="verifyCode" class="form-control" style="display:none" />
                         <button class="btn btn-primary" type="button" id="buyButton" onclick="getFlashSalePath()">Add to Cart</button>
                     </div>
@@ -86,10 +86,9 @@
         // countDownEnd();
     });
 
-
+    // get Flash Sale Path
     function getFlashSalePath () {
         var productId = $("#productId").val();
-        console.log("productId: " + productId);
         g_showLoading();
         $.ajax({
             url: "/flash_sale/path",
@@ -100,7 +99,6 @@
             success: function (data) {
                 if (data.code == 200) {
                     var path = data.data;
-                    console.log(data);
                     doFlashSale(path);
                 } else {
                     layer.msg(data.code + ":" + data.msg);
@@ -110,6 +108,11 @@
                 layer.msg("Error in client request");
             }
         });
+    }
+
+    // refresh Verify Code
+    function refreshVerifyCode() {
+        $("#verifyCodeImg").attr("src", "/flash_sale/verifyCode?productId=" + $("#productId").val() + "&timestamp=" + new Date().getTime());
     }
 
     // do flash sale
@@ -134,6 +137,7 @@
         });
     }
 
+    // get Flash Sale Result: not completed, in queue, completed
     function getFlashSaleResult(productId){
         g_showLoading();
         $.ajax({
