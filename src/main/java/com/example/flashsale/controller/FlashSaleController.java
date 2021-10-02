@@ -180,10 +180,17 @@ public class FlashSaleController implements InitializingBean {
     @RequestMapping(value = "/path", method = RequestMethod.GET)
     @ResponseBody
     public Result<String> getFlashSalePath(Model model, FlashSaleUser user,
-                                        @RequestParam("productId") long productId){
+                                           @RequestParam("productId") long productId,
+                                           @RequestParam("verifyCode") int verifyCode){
         model.addAttribute("user", user);
         if (user == null){
             return  Result.error(CodeMsg.SESSION_ERROR);
+        }
+
+        // verify code
+        boolean isValid = flashSaleService.checkVerifyCode(user, productId, verifyCode);
+        if (!isValid) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
         }
 
         String path = flashSaleService.createFlashSalePath(user, productId);
@@ -209,7 +216,7 @@ public class FlashSaleController implements InitializingBean {
             return null;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return Result.error(CodeMsg.FLASH_SALE_Failed);
+            return Result.error(CodeMsg.FLASH_SALE_FAILED);
         }
     }
 
