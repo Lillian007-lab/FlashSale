@@ -27,7 +27,7 @@ public class CodeMsg {
     // Flash Sale code: 5005xx
     public static CodeMsg FLASH_SALE_OUT_OF_STOCK  = new CodeMsg(500500, "Product is out of stock");
     public static CodeMsg FLASH_SALE_REPEAT  = new CodeMsg(500501, "Can't buy a same flash sale product multiple times");
-    public static CodeMsg FLASH_SALE_Failed  = new CodeMsg(500502, "Flash Sale Failed");
+    public static CodeMsg FLASH_SALE_FAILED  = new CodeMsg(500502, "Flash Sale Failed");
 
 
     public CodeMsg(int code, String msg) {
