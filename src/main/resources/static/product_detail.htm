@@ -65,7 +65,14 @@
                     <input type="hidden" name="productId" id="productId">
                     <button class="btn btn-primary btn-block" type="submit" id="buyButton">Add to Cart</button>
                 </form>-->
-                <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="getFlashSalePath()">Add to Cart</button>
+                <div class="row">
+                    <div class="form-inline">
+                        <img id="verifyCodeImg" width="80" height="32" style="display:none"/>
+                        <input id="verifyCode" class="form-control" style="display:none" />
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getFlashSalePath()">Add to Cart</button>
+                    </div>
+                </div>
+
                 <input type="hidden" name="productId" id="productId">
             </td>
         </tr>
@@ -82,6 +89,7 @@
 
     function getFlashSalePath () {
         var productId = $("#productId").val();
+        console.log("productId: " + productId);
         g_showLoading();
         $.ajax({
             url: "/flash_sale/path",
@@ -92,6 +100,7 @@
             success: function (data) {
                 if (data.code == 200) {
                     var path = data.data;
+                    console.log(data);
                     doFlashSale(path);
                 } else {
                     layer.msg(data.code + ":" + data.msg);
@@ -223,7 +232,7 @@
         var timeout;
         console.log("remainingSecToStart: " + remainingSecToStart)
 
-        if (remainingSecToStart > 0) {
+        if (remainingSecToStart > 0) {                      // not started
             $("#buyButton").attr("disabled",true);
             $("#flashSaleTip").html("Flash Sale will start in: " + remainingSecToStart + " seconds");
             timeout = setTimeout(function () {
@@ -231,16 +240,23 @@
                 $("#remainingSecToStart").val(remainingSecToStart - 1);
                 countDown();
             }, 1000);
-        } else if (remainingSecToStart == 0) {
+        } else if (remainingSecToStart == 0) {              // in process
             $("#buyButton").attr("disabled",false);
             console.log("timeout: " + timeout)
             if (timeout) {
                 clearTimeout(timeout);
             }
             $("#flashSaleTip").html("Flash Sale is in process");
-        } else {
+            $("#verifyCodeImg").attr("src", "/flash_sale/verifyCode?productId=" + $("#productId").val());
+            $("#verifyCodeImg").show();
+            $("#verifyCode").show();
+
+
+        } else {                                            // ended
             $("#buyButton").attr("disabled",true);
             $("#flashSaleTip").html("Flash Sale is ended");
+            $("#verifyCodeImg").hide();
+            $("#verifyCode").hide();
         }
     };
 
