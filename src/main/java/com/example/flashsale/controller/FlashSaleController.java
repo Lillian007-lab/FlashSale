@@ -4,10 +4,7 @@ import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.rabbitmq.FlashSaleMessage;
 import com.example.flashsale.rabbitmq.MQSender;
-import com.example.flashsale.redis.FlashSaleKey;
-import com.example.flashsale.redis.OrderKey;
-import com.example.flashsale.redis.ProductKey;
-import com.example.flashsale.redis.RedisService;
+import com.example.flashsale.redis.*;
 import com.example.flashsale.result.CodeMsg;
 import com.example.flashsale.result.Result;
 import com.example.flashsale.service.FlashSaleService;
@@ -22,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
@@ -179,13 +177,27 @@ public class FlashSaleController implements InitializingBean {
 
     @RequestMapping(value = "/path", method = RequestMethod.GET)
     @ResponseBody
-    public Result<String> getFlashSalePath(Model model, FlashSaleUser user,
+    public Result<String> getFlashSalePath(FlashSaleUser user,
+                                           HttpServletRequest request,
                                            @RequestParam("productId") long productId,
                                            @RequestParam("verifyCode") int verifyCode){
-        model.addAttribute("user", user);
+
         if (user == null){
             return  Result.error(CodeMsg.SESSION_ERROR);
         }
+
+        // check visit times in redis, limit 5 times/ 5 seconds
+        String uri = request.getRequestURI();
+        String key = uri + "_" + user.getId();
+        Integer count = redisService.get(AccessKey.access, key, Integer.class );
+        if (count == null) {
+            redisService.set(AccessKey.access, key, 1);
+        } else if (count < 5) {
+            redisService.incr(AccessKey.access, key);
+        } else {
+            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+        }
+
 
         // verify code
         boolean isValid = flashSaleService.checkVerifyCode(user, productId, verifyCode);
