@@ -185,4 +185,17 @@ public class FlashSaleService {
         System.out.println("exp: " + exp);
         return exp;
     }
+
+    public boolean checkVerifyCode(FlashSaleUser user, long productId, int verifyCode) {
+        if (user == null || productId <= 0) {
+            return false;
+        }
+        Integer verifyCodeOnRedis = redisService.get(FlashSaleKey.getVerificationCode, user.getId() + "," + productId, Integer.class);
+
+        if (verifyCodeOnRedis == null || verifyCodeOnRedis - verifyCode != 0) {
+            return false;
+        }
+        redisService.delete(FlashSaleKey.getVerificationCode, user.getId() + "," + productId);
+        return true;
+    }
 }
