@@ -1,2 +1,6 @@
-## Test
+# Flash Sale System
+
+## Project Structure
+
+
 
