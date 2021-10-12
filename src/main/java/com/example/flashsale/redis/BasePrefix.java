@@ -6,7 +6,7 @@ public abstract class BasePrefix implements KeyPrefix{
     private String prefix;
 
     public BasePrefix(String prefix) {
-        this(0, prefix);
+        this(0, prefix); // never expire
     }
 
     public BasePrefix(int expireSeconds, String prefix) {
@@ -15,7 +15,7 @@ public abstract class BasePrefix implements KeyPrefix{
     }
 
     @Override
-    public int expireSeconds() {  // 0: never expire
+    public int getExpireSeconds() {  // 0: never expire
         return expireSeconds;
     }
 
