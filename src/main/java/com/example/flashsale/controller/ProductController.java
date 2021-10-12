@@ -8,7 +8,6 @@ import com.example.flashsale.service.FlashSaleUserService;
 import com.example.flashsale.service.ProductService;
 import com.example.flashsale.vo.ProductDetailVo;
 import com.example.flashsale.vo.ProductVo;
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
-import org.thymeleaf.spring5.context.webflux.SpringWebFluxExpressionContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.util.StringUtils;
 
@@ -51,6 +48,10 @@ public class ProductController {
      * QPS: 3815
      * Threads: 5000 * 10
      *
+     *
+     * Return HTML as String -- HTML web pages caching
+     * 60 seconds cache for the product_list.html
+     *
      */
     @RequestMapping(value = "/to_list", produces = "text/html")
     @ResponseBody
@@ -65,19 +66,21 @@ public class ProductController {
         }
 
         List<ProductVo> productVoList = productService.listProductVo();
-//        System.out.println("productVoList size: "  + productVoList.size());
-//        for (ProductVo p: productVoList){
-//            System.out.println(p.getId());
-//            System.out.println(p.getProductName());
-//        }
+/*        System.out.println("productVoList size: "  + productVoList.size());
+        for (ProductVo p: productVoList){
+            System.out.println(p.getId());
+            System.out.println(p.getProductName());
+        }*/
 
         model.addAttribute("productList", productVoList);
-        //return "product_list";
+/*        return "product_list";*/
 
         // render
         IWebContext context = new WebContext(request, response, request.getServletContext(),
                 request.getLocale(), model.asMap());
         html = thymeleafViewResolver.getTemplateEngine().process("product_list", context);
+
+        // add to redis if the html template is not null
         if (!StringUtils.isEmpty(html)){
             redisService.set(ProductKey.getProductList, "", html);
         }
@@ -85,9 +88,20 @@ public class ProductController {
 
     }
 
+    /**
+     * Return HTML ( dynamic productId) as String -- URL caching
+     * 60 seconds cache for the product_detail.html
+     *
+     * @param model
+     * @param user
+     * @param productId
+     * @param response
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/to_detail/{productId}", produces = "text/html")
     @ResponseBody
-    public String detail2(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
+    public String to_detail_old(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
                          HttpServletResponse response, HttpServletRequest request){
 
         model.addAttribute("user", user);
@@ -137,7 +151,17 @@ public class ProductController {
     }
 
 
-
+    /**
+     * Browser cache
+     *
+     *
+     * @param model
+     * @param user
+     * @param productId
+     * @param response
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/detail/{productId}")
     @ResponseBody
     public Result<ProductDetailVo> detail(Model model, FlashSaleUser user, @PathVariable("productId")long productId,
