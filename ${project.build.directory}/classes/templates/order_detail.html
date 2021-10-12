@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details</title>
+    <!--jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!--bootstrap-->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!--layer-->
+    <script type="text/Javascript" th:src="@{/layer/layer.js}"></script>
+    <!--common.js-->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">Flash Order Details</div>
+    <table class="table" id="order">
+        <tr>
+            <td>Product Name</td>
+            <td colspan="3" th:text="${product.productName}"></td>
+        </tr>
+        <tr>
+            <td>Product Image</td>
+            <td colspan="2"><img th:src="@{${product.productImg}}" width="30%" height="30%"/></td>
+        </tr>
+        <tr>
+            <td>Product Price</td>
+            <td colspan="2" th:text="${order.productPrice}"></td>
+        </tr>
+        <tr>
+            <td>Order Placed Date</td>
+            <td colspan="2" th:text="${#dates.format(order.createDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+        </tr>
+        <tr>
+            <td>Order Status</td>
+            <td>
+                <span th:if="${order.status eq 0}">Waiting for payment</span>
+                <span th:if="${order.status eq 1}">Waiting for carrier</span>
+                <span th:if="${order.status eq 2}">Sent</span>
+                <span th:if="${order.status eq 3}">Delivered</span>
+                <span th:if="${order.status eq 4}">Returned</span>
+                <span th:if="${order.status eq 5}">Completed</span>
+            </td>
+
+        </tr>
+        <tr>
+            <td>Username</td>
+            <td colspan="2" th:text="${user.username}"></td>
+        </tr>
+        <tr>
+            <td>Delivery Address</td>
+            <td colspan="2" th:text="${order.deliveryAddrId}"></td>
+        </tr>
+        <tr>
+            <td>
+                <button class="btn btn-primary btn-block" type="submit" id="payButton">Place your order</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

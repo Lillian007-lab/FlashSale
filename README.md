@@ -1,6 +1,8 @@
 # Flash Sale System
 
-This Flash Sale System is Spring Boot based system, which implements functions as login, check product list, flash sale execution, place orders, etc. It solves issues and improves performance in High Concurrency environment by adding cache, **asynchronous** messaging, limiting request frequency, etc. QPS is about doubled for key APIs requests during load testing in JMeter, which is tested in local machine (Win10) along with a virtual Linux machine (Ubuntu 20.04.2.0).
+This Flash Sale System is Spring Boot based system, which implements functions as login, check product list, flash sale execution, place orders, etc. It solves issues and improves performance in High Concurrency environment by adding cache, asynchronous messaging, limiting request frequency, etc. 
+
+After optimization, QPS is about doubled for key APIs requests during load testing in JMeter, which is tested in local machine (Win10) along with a virtual Linux machine (Ubuntu 20.04.2.0).
 
 ## Project Structure
 

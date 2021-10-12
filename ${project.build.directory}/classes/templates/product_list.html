@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <!--jquery-->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!--bootstrap-->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!--layer-->
+    <script type="text/Javascript" th:src="@{/layer/layer.js}"></script>
+    <!--common.js-->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">Flash Sale Product List</div>
+    <table class="table" id="productList">
+        <tr>
+            <td>Product Name</td>
+            <td>Product Image</td>
+            <td>Original Price</td>
+            <td>Flash Sale Price</td>
+            <td>Flash Sale Stock</td>
+            <td>Details</td>
+        </tr>
+        <tr th:each="product,productStat : ${productList}">
+            <td th:text="${product.productName}"></td>
+            <td><img th:src="@{${product.productImg}}" width=30% height=30%/></td>
+            <td th:text="${product.productPrice}"></td>
+            <td th:text="${product.flashSalePrice}"></td>
+            <td th:text="${product.flashSaleStock}"></td>
+
+<!--            <td><a th:href="'/product/to_detail/'+${product.id}">Details</a></td>-->
+
+            <td><a th:href="'/product_detail.htm?productId='+${product.id}">Details</a></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

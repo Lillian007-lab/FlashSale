@@ -57,6 +57,7 @@ public class UserUtil {
         }
         System.out.println("create user");
 
+/*
 
         //Insert into DB
         Connection connection = getConnection();
@@ -78,10 +79,11 @@ public class UserUtil {
         System.out.println("insert to db");
 
 
+*/
 
         //Log in, generate user ticket
-        String urlString = "http://localhost:8083/login/do_login";
-        File file = new File("d:\\config.txt");
+        String urlString = "http://localhost:8081/login/do_login";
+        File file = new File("d:\\5kUserConfig.txt");
         if (file.exists()) {
             file.delete();
         }
@@ -141,6 +143,7 @@ public class UserUtil {
         }
         raf.close();
         System.out.println("over");
+
     }
 
     /**

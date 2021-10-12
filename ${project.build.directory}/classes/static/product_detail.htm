@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Product Detail</title>
+    <!--jquery-->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!--bootstrap-->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <!--layer-->
+    <script type="text/Javascript" src="/layer/layer.js"></script>
+    <!--common.js-->
+    <script type="text/javascript" src="/js/common.js"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">Flash Sale Product Detail</div>
+    <div class="panel-body">
+        <span id="userTip">Please Login</span>
+        <span>There is no delivery address...</span>
+    </div>
+    <table class="table" id="product">
+        <tr>
+            <td>Product Name</td>
+            <td colspan="3" id="productName"></td>
+        </tr>
+        <tr>
+            <td>Product Image</td>
+            <td colspan="3"><img id="productImg" width=30% height=30%/></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Start Time</td>
+            <td id="startDate"></td>
+            <td>
+                <input type="hidden" id="remainingSecToStart">
+                <span id="flashSaleTip"></span>
+            </td>
+        </tr>
+        <!-- <tr>
+             <td>Flash Sale End Time</td>
+             <td text="${#dates.format(product.endDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+             <td id="flashSaleEnd">
+                 <input type="hidden" id="endSeconds" value="${endSeconds}">
+                 <span>Count Down：<span id="countDownEnd"
+                                     text="${endSeconds}"></span>Seconds</span>
+                 <span if="${flashSaleStatus eq 2}">Flash Sale is ended</span>
+             </td>
+         </tr>-->
+        <tr>
+            <td>Original Price</td>
+            <td colspan="3" id="productPrice"></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Price</td>
+            <td colspan="3" id="flashSalePrice"></td>
+        </tr>
+        <tr>
+            <td>Flash Sale Stock</td>
+            <td colspan="3" id="flashSaleStock"></td>
+        </tr>
+        <tr>
+            <td>
+<!--                <form id="secKillForm" method="post" action="/flash_sale/do_flash_sale">
+                    <input type="hidden" name="productId" id="productId">
+                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">Add to Cart</button>
+                </form>-->
+                <div class="row">
+                    <div class="form-inline">
+                        <img id="verifyCodeImg" width="80" height="32" style="display:none" onclick="refreshVerifyCode()"/>
+                        <input id="verifyCode" class="form-control" style="display:none" />
+                        <button class="btn btn-primary" type="button" id="buyButton" onclick="getFlashSalePath()">Add to Cart</button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="productId" id="productId">
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+    $(function () {
+        getProductDetail();
+        // countDown();
+        // countDownEnd();
+    });
+
+    // get Flash Sale Path
+    function getFlashSalePath () {
+        var productId = $("#productId").val();
+        g_showLoading();
+        $.ajax({
+            url: "/flash_sale/path",
+            type: "GET",
+            data: {
+                productId: productId,
+                verifyCode: $("#verifyCode").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var path = data.data;
+                    doFlashSale(path);
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
+
+    // refresh Verify Code
+    function refreshVerifyCode() {
+        $("#verifyCodeImg").attr("src", "/flash_sale/verifyCode?productId=" + $("#productId").val() + "&timestamp=" + new Date().getTime());
+    }
+
+    // do flash sale
+    function doFlashSale(path) {
+        $.ajax({
+            url: "/flash_sale/" + path +"/do_flash_sale",
+            type: "POST",
+            data: {
+                productId: $("#productId").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    //window.location.href = "/orderDetail.htm?orderId=" + data.data.id;
+                    getFlashSaleResult($("#productId").val());
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
+
+    // get Flash Sale Result: not completed, in queue, completed
+    function getFlashSaleResult(productId){
+        g_showLoading();
+        $.ajax({
+            url: "/flash_sale/result",
+            type: "GET",
+            data: {
+                productId: $("#productId").val()
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    var result = data.data;
+                    if (result < 0) {
+                        layer.msg("Sorry, Flash Sale didn't complete!")
+                    } else if (result == 0){
+                        setTimeout(function (){
+                            getFlashSaleResult(productId);
+                        }, 200);
+                    } else {
+                        layer.confirm("Congratulations! Check out your order details?" , {btn:["Yes", "No"]},
+                            function (){
+                                window.location.href = "/orderDetail.htm?orderId=" + result;
+                            },
+                            function () {
+                                layer.closeAll();
+                            }
+                        );
+                    }
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        });
+    }
+
+
+    //ajax async request data
+    function getProductDetail() {
+        //var productId = g_getQueryString("productId");
+        var productId = getQueryVariable("productId");
+
+        $.ajax({
+            url: "/product/detail/" + productId,
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                if (data.code == 200) {
+                    render(data.data);
+                } else {
+                    layer.msg(data.code + ":" + data.msg);
+                }
+            },
+            error: function () {
+                layer.msg("Error in client request");
+            }
+        })
+    }
+
+    //ajax: use returned value to render webpage
+    function render(detail) {
+        var user = detail.user;
+        var productVo = detail.productVo;
+        var remainingSecToStart = detail.remainingSecToStart;
+        var flashSaleStatus = detail.flashSaleStatus;
+
+        if (user) {
+            $("#userTip").hide();
+        }
+        $("#productName").text(productVo.productName);
+        $("#productImg").attr("src", productVo.productImg);
+
+        var date = new Date(productVo.startDate);
+        console.log("date: " + date);
+        var utc = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        console.log("utc: " + utc);
+        $("#startDate").text(date.format("yyyy-MM-dd HH:mm:ss"));
+        console.log(utc.format("yyyy-MM-dd HH:mm:ss"));
+        // $("#endDate").text(new Date(productVo.endDate).format("yyyy-MM-dd HH:mm:ss"));
+        $("#remainingSecToStart").val(remainingSecToStart);
+        // $("#endSeconds").val(endSeconds);
+        $("#productId").val(productVo.id);
+        $("#productPrice").text(productVo.productPrice);
+        $("#flashSalePrice").text(productVo.flashSalePrice);
+        $("#flashSaleStock").text(productVo.flashSaleStock);
+        countDown();
+        // countDownEnd();
+    }
+
+
+
+    //Count Down to get started
+    function countDown() {
+        var remainingSecToStart = $("#remainingSecToStart").val();
+        var timeout;
+        console.log("remainingSecToStart: " + remainingSecToStart)
+
+        if (remainingSecToStart > 0) {                      // not started
+            $("#buyButton").attr("disabled",true);
+            $("#flashSaleTip").html("Flash Sale will start in: " + remainingSecToStart + " seconds");
+            timeout = setTimeout(function () {
+                $("#countDown").text(remainingSecToStart - 1);
+                $("#remainingSecToStart").val(remainingSecToStart - 1);
+                countDown();
+            }, 1000);
+        } else if (remainingSecToStart == 0) {              // in process
+            $("#buyButton").attr("disabled",false);
+            console.log("timeout: " + timeout)
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            $("#flashSaleTip").html("Flash Sale is in process");
+            $("#verifyCodeImg").attr("src", "/flash_sale/verifyCode?productId=" + $("#productId").val());
+            $("#verifyCodeImg").show();
+            $("#verifyCode").show();
+
+
+        } else {                                            // ended
+            $("#buyButton").attr("disabled",true);
+            $("#flashSaleTip").html("Flash Sale is ended");
+            $("#verifyCodeImg").hide();
+            $("#verifyCode").hide();
+        }
+    };
+
+    //Flash sale count down to be ended
+    function countDownEnd() {
+        var endSeconds = $("#endSeconds").val();
+        var timeoutEnd;
+        if (endSeconds > 0) {
+            timeoutEnd = setTimeout(function () {
+                $("#countDownEnd").text(endSeconds - 1);
+                $("#endSeconds").val(endSeconds - 1);
+                countDownEnd();
+            }, 1000);
+        } else if (endSeconds == 0) {
+            if (timeoutEnd) {
+                clearTimeout(timeoutEnd);
+            }
+            $("#seckillTipEnd").html("Flash Sale is ended");
+            $("#flashSaleTip").html("Flash Sale is ended");
+            $("#buyButton").attr("disabled",true);
+        } else {
+            $("#seckillTipEnd").html("Flash Sale is ended");
+            $("#buyButton").attr("disabled",true);
+        }
+    };
+
+</script>
+</html>
