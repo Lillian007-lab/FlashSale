@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="login-html">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 
     <!--jquery-->
-    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
 
     <!--bootstrap-->
-    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
-    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.js}"></script>
 
     <!--iquery-validator-->
-    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.js}"></script>
 <!--    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.messages_cn.js}"></script>-->
 
     <!--layer-->
@@ -26,13 +26,13 @@
     <script type="text/javascript" th:src="@{/js/common.js}"></script>
 </head>
 <body>
-<form name="loginForm" id="loginForm" method="post" style="width:50%; margin:0 auto">
+<form name="loginForm" id="loginForm" method="post" style="width:30%; margin:0 auto">
     <h2 style="text-align:center; margin-bottom: 20px">User Login</h2>
 
     <div class="form-group" >
         <div class="row" >
-            <label class="form-label col-md-4">Please enter your mobile number</label>
-            <div class="col-md-5">
+            <label class="form-label col-md-6">Mobile number</label>
+            <div class="col-md-6">
                 <input id="mobile" name="mobile" class="form-control" type="text" placeholder="Mobile number" required="true"
                        minlength="10" maxlength="10"/>
             </div>
@@ -43,8 +43,8 @@
 
     <div class="form-group">
         <div class="row">
-            <label class="form-label col-md-4">Please enter your password</label>
-            <div class="col-md-5">
+            <label class="form-label col-md-6">Password</label>
+            <div class="col-md-6">
                 <input id="password" name="password" class="form-control" type="password" placeholder="Password"
                        required="true" minlength="6" maxlength="16"/>
             </div>
