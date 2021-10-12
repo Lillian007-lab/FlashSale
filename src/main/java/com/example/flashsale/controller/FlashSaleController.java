@@ -97,16 +97,16 @@ public class FlashSaleController implements InitializingBean {
         }
 
         // Utilize memory tag, to reduce visits to redis
-        // Check out is local is out of stock
+        // Check out if local is out of stock
         boolean isLocalOver = localOverMap.get(productId);
         if (isLocalOver) {
-            localOverMap.put(productId, true);
             return Result.error(CodeMsg.FLASH_SALE_OUT_OF_STOCK);
         }
 
         // pre-decrease stock in redis
         long stock = redisService.decr(ProductKey.getFlashSaleStock, "" + productId);
         if (stock < 0){
+            localOverMap.put(productId, true);
             return Result.error(CodeMsg.FLASH_SALE_OUT_OF_STOCK);
         }
 
@@ -174,8 +174,15 @@ public class FlashSaleController implements InitializingBean {
     }
 
 
-
-
+    /**
+     * Generate encrypted UUID for path
+     *
+     * @param user
+     * @param request
+     * @param productId
+     * @param verifyCode
+     * @return
+     */
     @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value = "/path", method = RequestMethod.GET)
     @ResponseBody
@@ -187,6 +194,19 @@ public class FlashSaleController implements InitializingBean {
         if (user == null){
             return  Result.error(CodeMsg.SESSION_ERROR);
         }
+/*
+        // check visit times
+        String uri = request.getRequestURI();
+        String key = uri + "_" + user.getId();
+        Integer count = redisService.get(AccessKey.access5Sec, key, Integer.class);
+        if (count == null) {
+            redisService.set(AccessKey.access5Sec, key, 1);
+        } else if (count < 5) {
+            redisService.incr(AccessKey.access5Sec, key);
+        } else {
+            return  Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+        }
+*/
 
         // verify code
         boolean isValid = flashSaleService.checkVerifyCode(user, productId, verifyCode);
@@ -199,6 +219,15 @@ public class FlashSaleController implements InitializingBean {
     }
 
 
+    /**
+     * Generate verify code
+     *
+     * @param model
+     * @param user
+     * @param productId
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "/verifyCode", method = RequestMethod.GET)
     @ResponseBody
     public Result<String> getFlashSaleVerifyCode(Model model, FlashSaleUser user,

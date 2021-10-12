@@ -43,7 +43,7 @@ public class OrderController {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null){
-            return Result.error(CodeMsg.ORDER_NOT_EXIT);
+            return Result.error(CodeMsg.ORDER_NOT_EXIST);
         }
 
         long productId = order.getProductId();
