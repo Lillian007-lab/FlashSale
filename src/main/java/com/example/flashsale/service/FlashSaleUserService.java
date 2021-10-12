@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class FlashSaleUserService {
 
-    public static final String COOKIE_NAME_TOKEN = "token";
+    public static final String COOKIE_NAME_SESSIONID = "SessionID";
 
     @Autowired
     FlashSaleUserDAO flashSaleUserDAO;
@@ -27,6 +27,14 @@ public class FlashSaleUserService {
     @Autowired
     RedisService redisService;
 
+    /**
+     * Get By Id
+     *
+     * - Apply Object Caching
+     *
+     * @param id
+     * @return
+     */
     public FlashSaleUser getById(long id){
 
         // get from redis cache
@@ -44,6 +52,16 @@ public class FlashSaleUserService {
     }
 
 
+    /**
+     * Update password
+     *
+     *  - Apply Object Caching
+     *
+     * @param token
+     * @param id
+     * @param formPass
+     * @return
+     */
     public boolean updatePassword(String token, long id, String formPass){
         // get user
         FlashSaleUser user = getById(id);
@@ -55,17 +73,24 @@ public class FlashSaleUserService {
         FlashSaleUser userToBeUpdated = new FlashSaleUser();
         userToBeUpdated.setId(id);
         userToBeUpdated.setPassword(MD5Util.formPassToDBPass(formPass, user.getSalt()));
-        flashSaleUserDAO.update(userToBeUpdated);
+        flashSaleUserDAO.updatePassword(userToBeUpdated);
 
         // update redis
         redisService.delete(FlashSaleUserKey.getById, "" + id);
         user.setPassword(userToBeUpdated.getPassword());
-        redisService.set(FlashSaleUserKey.token, token, user);
+        redisService.set(FlashSaleUserKey.sessionId, token, user);
 
         return  true;
     }
 
 
+    /**
+     * Login
+     *
+     * @param response
+     * @param loginVo
+     * @return
+     */
     public String login(HttpServletResponse response, LoginVo loginVo) {
 
         if(loginVo == null){
@@ -86,30 +111,37 @@ public class FlashSaleUserService {
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
 
-        // generate cookie
-        String token = UUIDUtil.uuid();
-        addCookie(response, token, flashSaleUser);
-
-        return token;
+        // generate cookie and add it to client side
+        String sessionId = UUIDUtil.uuid();
+        addCookie(response, sessionId, flashSaleUser);
+        System.out.println("sessionId UUID: " + sessionId);
+        return sessionId;
     }
 
-    public FlashSaleUser getByToken(HttpServletResponse response, String token) {
-        if (StringUtils.isEmpty(token)){
+    /**
+     * Get By Token
+     *
+     * @param response
+     * @param sessionId
+     * @return
+     */
+    public FlashSaleUser getByToken(HttpServletResponse response, String sessionId) {
+        if (StringUtils.isEmpty(sessionId)){
             return null;
         }
-        FlashSaleUser flashSaleUser = redisService.get(FlashSaleUserKey.token, token, FlashSaleUser.class);
+        FlashSaleUser flashSaleUser = redisService.get(FlashSaleUserKey.sessionId, sessionId, FlashSaleUser.class);
         // extend expiration time
         if (flashSaleUser != null){
-            addCookie(response, token, flashSaleUser);
+            addCookie(response, sessionId, flashSaleUser);
         }
         return flashSaleUser;
 
     }
 
-    private void addCookie(HttpServletResponse response, String token, FlashSaleUser user) {
-        redisService.set(FlashSaleUserKey.token, token, user);
-        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(FlashSaleUserKey.token.expireSeconds());
+    private void addCookie(HttpServletResponse response, String sessionId, FlashSaleUser user) {
+        redisService.set(FlashSaleUserKey.sessionId, sessionId, user);
+        Cookie cookie = new Cookie(COOKIE_NAME_SESSIONID, sessionId);
+        cookie.setMaxAge(FlashSaleUserKey.sessionId.getExpireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
     }
