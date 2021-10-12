@@ -125,7 +125,7 @@ public class UserUtil {
             String response = new String(bout.toByteArray());*/
             JSONObject jo = JSON.parseObject(response);
             String token = jo.getString("data");
-            System.out.println("Creat toekn: " + user.getId());
+            System.out.println("Create sessionId for user: " + user.getId());
 
 
 //            ObjectMapper mapper = new ObjectMapper();
