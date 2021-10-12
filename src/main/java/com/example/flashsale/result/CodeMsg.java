@@ -22,7 +22,7 @@ public class CodeMsg {
     public static CodeMsg PASSWORD_ERROR  = new CodeMsg(500205, "Password is not correct");
 
     // Order code: 5003xx
-    public static final CodeMsg ORDER_NOT_EXIT = new CodeMsg(500301, "Order does not exit");;
+    public static final CodeMsg ORDER_NOT_EXIST = new CodeMsg(500301, "Order does not exit");;
 
 
     // Flash Sale code: 5005xx
