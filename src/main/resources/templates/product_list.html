@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Product List</title>
     <!--jquery-->
-    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.js}"></script>
     <!--bootstrap-->
-    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
-    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.js}"></script>
     <!--layer-->
     <script type="text/Javascript" th:src="@{/layer/layer.js}"></script>
     <!--common.js-->
@@ -15,19 +15,25 @@
 </head>
 <body>
 <div class="panel panel-default">
-    <div class="panel-heading">Flash Sale Product List</div>
-    <table class="table" id="productList">
+    <div class="panel-heading" style="margin-bottom: 10px">
+        <h3>Flash Sale Product List</h3>
+    </div>
+    <table class="table table-bordered" id="productList">
         <tr>
-            <td>Product Name</td>
-            <td>Product Image</td>
-            <td>Original Price</td>
-            <td>Flash Sale Price</td>
-            <td>Flash Sale Stock</td>
-            <td>Details</td>
+            <td style="font-weight: bolder">Product Name</td>
+            <td style="font-weight: bolder">Product Image</td>
+            <td style="font-weight: bolder">Original Price</td>
+            <td style="font-weight: bolder">Flash Sale Price</td>
+            <td style="font-weight: bolder">Flash Sale Stock</td>
+            <td style="font-weight: bolder">Details</td>
         </tr>
         <tr th:each="product,productStat : ${productList}">
             <td th:text="${product.productName}"></td>
-            <td><img th:src="@{${product.productImg}}" width=30% height=30%/></td>
+            <td>
+                <div class="text-center" style="max-width: 150px">
+                    <img th:src="@{${product.productImg}}" class="img-fluid img-thumbnail"/>
+                </div>
+            </td>
             <td th:text="${product.productPrice}"></td>
             <td th:text="${product.flashSalePrice}"></td>
             <td th:text="${product.flashSaleStock}"></td>
