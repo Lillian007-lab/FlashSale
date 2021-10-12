@@ -8,7 +8,7 @@ public class FlashSaleUserKey extends BasePrefix{
         super(expireSeconds, prefix);
     }
 
-    public static FlashSaleUserKey token = new FlashSaleUserKey(TOKEN_EXPIRE,"token");
+    public static FlashSaleUserKey sessionId = new FlashSaleUserKey(TOKEN_EXPIRE,"sessionID");
     public static FlashSaleUserKey getById = new FlashSaleUserKey(0,"id");
 
 }
