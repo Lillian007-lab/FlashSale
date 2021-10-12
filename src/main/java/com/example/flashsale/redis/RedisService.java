@@ -57,7 +57,7 @@ public class RedisService {
                 return false;
             }
             String actualKey = prefix.getPrefix() + key;
-            int expireSec = prefix.expireSeconds();
+            int expireSec = prefix.getExpireSeconds();
             if (expireSec <= 0){
                 jedis.set(actualKey,str);
             } else {
@@ -89,7 +89,7 @@ public class RedisService {
 
 
     /**
-     * Delete
+     * Delete with prefix and key
      * @param prefix
      * @param key
      * @return
@@ -144,7 +144,7 @@ public class RedisService {
 
 
     /**
-     * Increase value
+     * Increase value by one
      * @param prefix
      * @param key
      * @param <T>
@@ -162,7 +162,7 @@ public class RedisService {
     }
 
     /**
-     * Decrease value
+     * Decrease value by one
      * @param prefix
      * @param key
      * @param <T>
@@ -179,6 +179,12 @@ public class RedisService {
         }
     }
 
+    /**
+     *  Bean to String convertor
+     * @param value
+     * @param <T>
+     * @return
+     */
     public static <T> String beanToString(T value) {
         if(value == null){
             return null;
@@ -195,6 +201,13 @@ public class RedisService {
         }
     }
 
+    /**
+     * String to Bean convertor
+     * @param str
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public static  <T> T stringToBean(String str, Class<T> clazz) {
         if (str == null || str.length() <= 0 || clazz == null){
             return null;
@@ -210,6 +223,7 @@ public class RedisService {
         }
     }
 
+    // Return jedis to jedis pool
     private void returnToPool(Jedis jedis) {
         if (jedis != null){
             jedis.close();
