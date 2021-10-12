@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Product Detail</title>
     <!--jquery-->
-    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.js"></script>
     <!--bootstrap-->
-    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css"/>
-    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
     <!--layer-->
     <script type="text/Javascript" src="/layer/layer.js"></script>
     <!--common.js-->
@@ -15,22 +15,24 @@
 </head>
 <body>
 <div class="panel panel-default">
-    <div class="panel-heading">Flash Sale Product Detail</div>
+    <div class="panel-heading" style="margin-bottom: 10px">
+        <h3>Flash Sale Product Detail</h3>
+    </div>
     <div class="panel-body">
         <span id="userTip">Please Login</span>
-        <span>There is no delivery address...</span>
+<!--        <span>There is no delivery address...</span>-->
     </div>
-    <table class="table" id="product">
+    <table class="table table-bordered" id="product">
         <tr>
-            <td>Product Name</td>
+            <td style="font-weight: bolder">Product Name</td>
             <td colspan="3" id="productName"></td>
         </tr>
         <tr>
-            <td>Product Image</td>
+            <td style="font-weight: bolder">Product Image</td>
             <td colspan="3"><img id="productImg" width=30% height=30%/></td>
         </tr>
         <tr>
-            <td>Flash Sale Start Time</td>
+            <td style="font-weight: bolder">Flash Sale Start Time</td>
             <td id="startDate"></td>
             <td>
                 <input type="hidden" id="remainingSecToStart">
@@ -48,15 +50,15 @@
              </td>
          </tr>-->
         <tr>
-            <td>Original Price</td>
+            <td style="font-weight: bolder">Original Price</td>
             <td colspan="3" id="productPrice"></td>
         </tr>
         <tr>
-            <td>Flash Sale Price</td>
+            <td style="font-weight: bolder">Flash Sale Price</td>
             <td colspan="3" id="flashSalePrice"></td>
         </tr>
         <tr>
-            <td>Flash Sale Stock</td>
+            <td style="font-weight: bolder">Flash Sale Stock</td>
             <td colspan="3" id="flashSaleStock"></td>
         </tr>
         <tr>
@@ -150,13 +152,13 @@
             success: function (data) {
                 if (data.code == 200) {
                     var result = data.data;
-                    if (result < 0) {
+                    if (result < 0) {                           // failed
                         layer.msg("Sorry, Flash Sale didn't complete!")
-                    } else if (result == 0){
+                    } else if (result == 0){                    // in queue
                         setTimeout(function (){
                             getFlashSaleResult(productId);
                         }, 200);
-                    } else {
+                    } else {                                    // succeeded
                         layer.confirm("Congratulations! Check out your order details?" , {btn:["Yes", "No"]},
                             function (){
                                 window.location.href = "/orderDetail.htm?orderId=" + result;
@@ -188,6 +190,8 @@
             success: function (data) {
                 console.log(data);
                 if (data.code == 200) {
+                    console.log("/product/detail/");
+                    console.log(data);
                     render(data.data);
                 } else {
                     layer.msg(data.code + ":" + data.msg);
