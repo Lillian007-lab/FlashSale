@@ -118,6 +118,14 @@ public class FlashSaleService {
         return pathFromRedis.equals(path);
     }
 
+
+    /**
+     * Create verify code image
+     *
+     * @param user
+     * @param productId
+     * @return
+     */
     public BufferedImage createVerifyCode(FlashSaleUser user, long productId) {
         if (user == null || productId <= 0){
             return null;
