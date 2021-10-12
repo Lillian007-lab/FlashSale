@@ -31,6 +31,7 @@ public class AccessInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
+
         if (handler instanceof HandlerMethod) {
 
             FlashSaleUser user = getUser(request, response);
@@ -39,7 +40,7 @@ public class AccessInterceptor implements HandlerInterceptor {
             HandlerMethod hm = (HandlerMethod) handler;
             AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
             if (accessLimit == null ) {
-                return  true;
+                return true;
             }
 
             int seconds = accessLimit.seconds();
@@ -84,8 +85,8 @@ public class AccessInterceptor implements HandlerInterceptor {
 
     private FlashSaleUser getUser(HttpServletRequest request, HttpServletResponse response) {
 
-        String paramToken = request.getParameter(FlashSaleUserService.COOKIE_NAME_TOKEN);
-        String coolieToken = getCookieValue(request, FlashSaleUserService.COOKIE_NAME_TOKEN);
+        String paramToken = request.getParameter(FlashSaleUserService.COOKIE_NAME_SESSIONID);
+        String coolieToken = getCookieValue(request, FlashSaleUserService.COOKIE_NAME_SESSIONID);
         if (StringUtils.isEmpty(coolieToken) && StringUtils.isEmpty(paramToken)) {
             return null;
         }
