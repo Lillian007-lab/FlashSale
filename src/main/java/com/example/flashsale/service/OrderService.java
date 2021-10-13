@@ -8,11 +8,9 @@ import com.example.flashsale.redis.OrderKey;
 import com.example.flashsale.redis.RedisService;
 import com.example.flashsale.vo.ProductVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.ldap.SortResponseControl;
 import java.util.Date;
 
 @Service

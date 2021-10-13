@@ -1,7 +1,6 @@
 package com.example.flashsale.dao;
 
 import com.example.flashsale.domain.FlashSaleProduct;
-import com.example.flashsale.domain.Product;
 import com.example.flashsale.vo.ProductVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

@@ -1,7 +1,5 @@
 package com.example.flashsale.rabbitmq;
 
-import com.rabbitmq.client.AMQP;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

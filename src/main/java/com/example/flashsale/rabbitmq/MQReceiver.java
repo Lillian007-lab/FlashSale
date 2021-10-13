@@ -3,8 +3,6 @@ package com.example.flashsale.rabbitmq;
 import com.example.flashsale.domain.FlashSaleOrder;
 import com.example.flashsale.domain.FlashSaleUser;
 import com.example.flashsale.redis.RedisService;
-import com.example.flashsale.result.CodeMsg;
-import com.example.flashsale.result.Result;
 import com.example.flashsale.service.FlashSaleService;
 import com.example.flashsale.service.OrderService;
 import com.example.flashsale.service.ProductService;
